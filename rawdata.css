@@ -592,6 +592,9 @@ span {
   color: #28a745;
 }
 @media (max-height: 450px) {
+  div#navigation-buttons {
+    display: flex;
+}
   button#prevalid {
       margin-left: inherit;
   }
