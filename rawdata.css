@@ -613,6 +613,9 @@ span {
     width: 100px;
   }
 }
+button#prevalid {
+    margin-left: inherit;
+}
 
 @media (max-width: 480px) {
   #overview-container {
