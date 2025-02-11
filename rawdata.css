@@ -592,6 +592,14 @@ span {
   font-weight: 600;
   color: #28a745;
 }
+@media (orientation: landscape) {
+  div#navigation-buttons {
+    display: flex;
+  }
+  button#prevalid {
+    margin-left: inherit;
+  }
+}
 
 /* Quando il dispositivo è in modalità orizzontale */
 @media (orientation: landscape) {
