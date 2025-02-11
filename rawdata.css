@@ -195,7 +195,9 @@ body {
 #nextvalid:active {
   background-color: #1e7e34;
 }
-
+::-webkit-scrollbar{
+  display: none;
+}
 
 
 
