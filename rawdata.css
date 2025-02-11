@@ -21,14 +21,17 @@ body {
   width: 100%;
   margin: 20px;
 }
-#allert{
+
+#allert {
   display: flex;
   width: 100%;
   justify-content: center;
 }
-#label-channel{
+
+#label-channel {
   color: red;
 }
+
 #label-container {
   display: flex;
   flex-direction: row;
@@ -192,8 +195,6 @@ body {
 #nextvalid:active {
   background-color: #1e7e34;
 }
-
-
 
 
 
@@ -592,50 +593,70 @@ span {
   color: #28a745;
 }
 
-/* Resizing responsive */
-@media (max-width: 768px) {
-  #overview-container {
-    width: 80vw;
-    height: 15vh;
+/* Quando il dispositivo è in modalità orizzontale */
+@media (orientation: landscape) {
+  #navigation-buttons {
+    display: flex;
+    /* Forza la modifica */
   }
 
-  #mainChart {
-    width: 80vw;
-  }
-
-  #controls {
-    width: 100%;
-    margin-top: 20px;
-    padding: 15px;
-  }
-
-  #windowWidthInput {
-    width: 100px;
+  #prevalid {
+    margin-left: inherit;
   }
 }
 
-@media (max-width: 480px) {
-  #overview-container {
-    width: 90vw;
-    height: 12vh;
+@media (orientation: portrait) {
+  /* Resizing responsive */
+  @media (max-width: 768px) {
+    #overview-container {
+      width: 80vw;
+      height: 15vh;
+    }
+
+    #mainChart {
+      width: 80vw;
+    }
+
+    #controls {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+    }
+
+    #windowWidthInput {
+      width: 100px;
+    }
+
   }
 
-  #mainChart {
-    width: 90vw;
-  }
+  @media (max-width: 480px) {
+    #overview-container {
+      width: 90vw;
+      height: 12vh;
+    }
 
-  #controls {
-    width: 100%;
-    margin-top: 40px;
-  }
+    #mainChart {
+      width: 90vw;
+    }
 
-  #windowWidthInput {
-    width: 120px;
-  }
+    #controls {
+      width: 100%;
+      margin-top: 40px;
+    }
 
-  div#navigation-buttons {
-    display: flex;
-    gap: 25px;
-    flex-direction: column;
+    #windowWidthInput {
+      width: 120px;
+    }
+
+    div#navigation-buttons {
+      display: flex;
+      gap: 25px;
+      flex-direction: column;
+    }
+  
+    #prevalid {
+      margin-left: inherit;
+    }
+
   }
 }
