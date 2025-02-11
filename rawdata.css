@@ -1,0 +1,641 @@
+/* Styling generale */
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  color: #333;
+  /* Testo scuro per un buon contrasto */
+}
+
+
+
+
+#main-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin: 20px;
+}
+#allert{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+#label-channel{
+  color: red;
+}
+#label-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+}
+
+/*stile del popup*/
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+/* Popup */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: #ffffff;
+  padding: 20px 30px;
+  width: 320px;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+  z-index: 9999;
+
+}
+
+/* Icona */
+.popup .icon {
+  font-size: 50px;
+  color: #ff3b3b;
+  margin-bottom: 10px;
+  animation: bounce 1s infinite;
+}
+
+/* Titolo */
+.popup h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Testo */
+.popup p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Bottone */
+.popup button {
+  background: #ff3b3b;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.popup button:hover {
+  background: #d32f2f;
+}
+
+/* Effetto di entrata */
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popup.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Animazione icona */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Stile del contenitore per fileInput */
+
+/* Input di tipo file - stile personalizzato */
+#fileInput {
+  display: none;
+  font-size: 16px;
+  padding: 12px 15px;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#fileInput::before {
+  content: 'Select File';
+  font-size: 14px;
+  color: #6c757d;
+  display: block;
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* Focus e hover per il file input */
+#fileInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#fileInput:hover {
+  border-color: #007bff;
+}
+
+/* Stile del pulsante "next file" */
+#prevalid,
+#nextvalid {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+}
+
+#prevalid:hover,
+#nextvalid:hover {
+  background-color: #218838;
+}
+
+#prevalid:active,
+#nextvalid:active {
+  background-color: #1e7e34;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* choose channel styling */
+#Chosechannel {
+  font-size: 16px;
+  padding: 12px 15px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+#Chosechannel:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Stile per le opzioni del menu */
+#Chosechannel option {
+  font-size: 14px;
+  padding: 10px;
+  background-color: #fff;
+  color: #495057;
+  border: none;
+  cursor: pointer;
+}
+
+#Chosechannel option:hover {
+  background-color: #f1f1f1;
+  color: #007bff;
+}
+
+/* Aggiunta di uno stile per la selezione dell'elemento */
+#Chosechannel option:checked {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Pulsante per aprire la selezione (aggiornato visivamente) */
+#Chosechannel::-ms-expand {
+  display: none;
+}
+
+/* Creazione di un "pulsante" personalizzato per il menu */
+#Chosechannel-container {
+  position: relative;
+  display: inline-block;
+}
+
+#Chosechannel-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+#Chosechannel-button:hover {
+  color: #0056b3;
+}
+
+/* Stile di animazione della lista per un'apertura fluida */
+#Chosechannel {
+  -webkit-appearance: none;
+  /* Rimuove lo stile nativo su Safari */
+  -moz-appearance: none;
+  /* Rimuove lo stile nativo su Firefox */
+  appearance: none;
+  /* Rimuove lo stile nativo */
+  position: relative;
+  padding-right: 40px;
+  /* Per lasciare spazio per l'icona del pulsante */
+}
+
+/* Aggiungi un'icona al pulsante di selezione */
+#Chosechannel-button::before {
+  content: '\25BC';
+  /* Freccia verso il basso */
+  font-size: 18px;
+  color: #007bff;
+}
+
+#Chosechannel-container:hover #Chosechannel-button::before {
+  color: #0056b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Contenitore Utility */
+#utility-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px;
+  width: 40%;
+  max-width: 1200px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+
+#utility-container .input-field,
+#utility-container .select-field {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  width: 180px;
+  transition: border-color 0.3s ease;
+}
+
+#utility-container .input-field:focus,
+#utility-container .select-field:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+#plotButton,
+#updateWindow {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 120px;
+}
+
+#plotButton {
+  display: none;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:active {
+  background-color: #004085;
+}
+
+/* Container per Overview */
+#overview-container {
+  position: relative;
+  width: 90%;
+  height: 20vh;
+  margin: 20px auto;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#overview {
+  width: 100%;
+  height: 100%;
+}
+
+#window {
+  position: absolute;
+  top: 0;
+  width: 10%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  cursor: grab;
+  border: 2px solid #333;
+  touch-action: none;
+}
+
+/* Grafico principale */
+#mainChart {
+  width: 60%;
+  /* Si adatta alla larghezza del contenitore */
+  height: 100%;
+  /* Si adatta all'altezza del contenitore */
+  aspect-ratio: unset;
+  /* Rimuovi il rapporto di aspetto forzato */
+}
+
+#mainchart-container {
+  position: relative;
+  width: 90%;
+  height: 20vh;
+  margin: 20px auto;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenitore del loader con il logo */
+.loader-logo {
+  display: none;
+  /* Nascosto inizialmente */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Per centrare l'immagine verticalmente */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Sfondo semi-trasparente */
+  z-index: 9999;
+  /* Per garantirne la visibilità sopra ad altri elementi */
+}
+
+/* Immagine del logo */
+.logo {
+  width: 150px;
+  /* Imposta la dimensione desiderata */
+  height: auto;
+  /* Mantieni il rapporto di aspetto */
+  animation: fadeIn 1s ease-in-out;
+  /* Aggiungi animazione di apparizione */
+  animation: fadeOut 1s ease-in-out;
+  /* Aggiungi animazione di apparizione */
+
+}
+
+/* Animazione di fade-in (apparizione graduale) */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
+
+
+/* Contenitore del loader */
+.loader-container {
+  display: none;
+  /* Nascosto inizialmente */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Per centrare l'animazione verticalmente */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  /* Sfondo semi-trasparente */
+  z-index: 9999;
+  /* Per garantirne la visibilità sopra ad altri elementi */
+}
+
+/* L'animazione del loader */
+.loader {
+  border: 8px solid #f3f3f3;
+  /* Colore del bordo di base */
+  border-top: 8px solid #3498db;
+  /* Colore del bordo superiore che farà l'animazione */
+  border-radius: 50%;
+  /* Forma circolare */
+  width: 50px;
+  /* Dimensione del loader */
+  height: 50px;
+  /* Dimensione del loader */
+  animation: spin 2s linear infinite;
+  /* Animazione che gira */
+}
+
+/* Animazione di rotazione */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+/* Stile del contenitore per #controls */
+#controls {
+  background-color: #ffffff;
+  padding: 20px;
+  padding-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  /* Puoi regolare la larghezza come desiderato */
+  max-width: 400px;
+  /* Imposta una larghezza massima */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+  margin-left: 20px;
+  /* Aggiungi un po' di spazio in alto e in basso */
+}
+
+
+label {
+  font-size: 14px;
+  color: #495057;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+input[type="number"] {
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+input[type="number"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+p {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 0;
+}
+
+span {
+  font-weight: bold;
+  color: #007bff;
+}
+
+#velocity {
+  font-size: 14px;
+  color: #495057;
+  font-weight: bold;
+}
+
+#velocityValue {
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* Resizing responsive */
+@media (max-width: 768px) {
+  #overview-container {
+    width: 80vw;
+    height: 15vh;
+  }
+
+  #mainChart {
+    width: 80vw;
+  }
+
+  #controls {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+  }
+
+  #windowWidthInput {
+    width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  #overview-container {
+    width: 90vw;
+    height: 12vh;
+  }
+
+  #mainChart {
+    width: 90vw;
+  }
+
+  #controls {
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  #windowWidthInput {
+    width: 120px;
+  }
+
+  div#navigation-buttons {
+    display: flex;
+    gap: 25px;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Profile Reader</title>
+    <link rel="stylesheet" href="https://argosurbanmobility.com/wp-content/uploads/2025/02/rawdata.css">
+    <link rel="stylesheet" href="fileReader/fileReader.css">
+    <!-- Carica Chart.js dal CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Carica Hammer.js dal CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"
+        integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Carica Chart.js Plugin Zoom dal CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"
+        integrity="sha512-FRGbE3pigbYamZnw4+uT4t63+QJOfg4MXSgzPn2t8AWg9ofmFvZ/0Z37ZpCawjfXLBSVX2p2CncsmUH2hzsgJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Seleziona i File</h2>
+            <button id="select-all">Seleziona Tutti</button>
+            <button id="process-files">Carica File Selezionati</button>
+            <ul id="file-tree"></ul>
+        </aside>
+        <main class="content">
+            <div class="overlay" id="popupOverlay"></div>
+
+            <!-- Popup -->
+            <div class="popup" id="popup">
+                <div class="icon">⚠️</div>
+                <h2>Attenzione</h2>
+                <p>Il file caricato non contiene pacchetti validi.</p>
+                <button onclick="chiudiPopup()">OK</button>
+            </div>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+
+            <div id="main-container">
+                <div id="utility-container">
+                    <input type="file" id="fileInput" />
+                    <label id="filename">Choose File</label>
+                    <select id="Chosechannel">
+                        <option value="" selected disabled>Choose Channel</option>
+                        <option value="0">Channel 1</option>
+                        <option value="1">Channel 2</option>
+                        <option value="2">Channel 3</option>
+                        <option value="all">Show All</option>
+                    </select>
+                    <div id="navigation-buttons">
+                        <button id="prevalid">previous</button>
+                        <button id="nextvalid">next</button>
+                    </div>
+
+                    <button id="plotButton">Plot</button>
+                </div>
+                <div id="controls">
+                    <label for="windowWidthInput">Window Width (%)</label>
+                    <input type="number" id="windowWidthInput" min="1" max="100" value="10">
+                    <button id="updateWindow">Update</button>
+                </div>
+            </div>
+            <div id="label-container">
+                <p>Selected Point 1: <span id="point1">No Point Selected</span></p>
+                <p>Selected Point 2: <span id="point2">No Point Selected</span></p>
+                <label id="velocity">Velocity</label>
+            </div>
+            <div id="overview-container">
+                <canvas id="overview"></canvas>
+                <div id="window"></div>
+            </div>
+            <div id="allert">
+                <label id="label-channel">per favore seleziona un canale</label>
+            </div>
+            <canvas id="mainChart"></canvas>
+        </main>
+    </div>
+
+    <script type="module" src="rawdata.js"></script>
+    <script type="module" src="fileReader/app.js"></script>
+
+</body>
+
+</html>
