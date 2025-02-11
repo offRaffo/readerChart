@@ -591,7 +591,11 @@ span {
   font-weight: 600;
   color: #28a745;
 }
-
+@media (max-width: 900px) {
+  button#prevalid {
+      margin-left: inherit;
+  }
+}
 /* Resizing responsive */
 @media (max-width: 768px) {
   #overview-container {
@@ -612,9 +616,6 @@ span {
   #windowWidthInput {
     width: 100px;
   }
-}
-button#prevalid {
-    margin-left: inherit;
 }
 
 @media (max-width: 480px) {
