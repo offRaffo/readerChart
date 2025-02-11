@@ -591,14 +591,15 @@ span {
   font-weight: 600;
   color: #28a745;
 }
-@media (max-height: 450px) {
+@media (orientation: landscape) {
   div#navigation-buttons {
     display: flex;
-}
+  }
   button#prevalid {
-      margin-left: inherit;
+    margin-left: inherit;
   }
 }
+
 /* Resizing responsive */
 @media (max-width: 768px) {
   #overview-container {
