@@ -4,8 +4,9 @@ const plotButton = document.getElementById('plotButton');
 const nextvalid = document.getElementById('nextvalid');
 const prevalid = document.getElementById('prevalid');
 import { decodeData } from '../rawdata.js';
+import { FileManager } from '../fileReader/file-manager.js';
 import { prova } from '../fileReader/app.js';
-const chindex = 2;
+const chindex = 1;
 let currentstart = 0;
 let cycleifles = false;
 let overviewChart = null;
@@ -49,7 +50,7 @@ async function startModuleProcessing(receivedFilesQueue, receivedFileIndex) {
             let path = "/";
             const { ftpfiles } = await explore(path);
             filesQueue = ftpfiles.map(file => `${path}/${file}`);
-            console.log(filesQueue,"file queue");
+            console.log(filesQueue, "file queue");
             currentFileIndex = 0;
         } else {
             console.error("Nessun file selezionato! Impossibile avviare il processo.");
@@ -137,8 +138,8 @@ function nextValidClick() {
         }
     }
 }
-function preValidClick() {            
-    console.log(currentFileIndex,cycleifles);
+function preValidClick() {
+    console.log(currentFileIndex, cycleifles);
 
     if (cycleifles == true) {
         if (currentFileIndex > 0) {
@@ -188,7 +189,7 @@ export async function init(receivedFilesQueue = [], receivedFileIndex = 0, curre
     document.querySelector('.loader-container').style.display = 'flex';
     cycleifles = true;
     receivedFilesQueue = prova;
-    console.log(filesQueue,"file queue"); 
+    console.log(filesQueue, "file queue");
     console.log("Modulo inizializzato.");
     currentstart = currentwindowstart;
     startModuleProcessing(receivedFilesQueue, receivedFileIndex);
@@ -385,21 +386,26 @@ export function plotData(decodedData) {
 
 
     // Configurazione grafico "main" (dati filtrati dalla finestra)
+    // Otteniamo il contesto del canvas
     const mainCtx = document.getElementById('mainChart').getContext('2d');
     let selectedPoints = [];
+    let handlepan = false;
+    // Se esiste già un grafico, lo distruggiamo
     if (mainChart) {
         mainChart.destroy();
     }
+
     mainChart = new Chart(mainCtx, {
         type: 'line',
         data: {
-            labels: [],
+            labels: [],  // Assicurati di popolare le label con i dati corretti
             datasets: [{
                 label: 'Dati Filtrati',
-                data: [],
-                borderColor: 'red',
+                data: [],  // I dati da visualizzare
+                borderColor: 'blue',
                 borderWidth: 1,
-                pointRadius: 0, // Cambiato per rendere i punti cliccabili
+                pointRadius: 1,      // I punti non vengono disegnati
+                pointHitRadius: 10,  // Aumenta l'area sensibile per il touch
             }]
         },
         options: {
@@ -407,71 +413,87 @@ export function plotData(decodedData) {
             animation: false,
             plugins: {
                 legend: { display: true },
-                tooltip: { enabled: false }, // Disabilita il tooltip visibile
+                tooltip: { enabled: false },
                 zoom: {
+                    // Configurazione dello zoom
                     zoom: {
-                        wheel: { enabled: true, modifierKey: 'ctrl' },
-                        pan: { enabled: true },
-                        pinch:{enabled: true}
+                        mode: 'x', // Lo zoom è limitato all'asse x
+                        wheel: { enabled: true, modifierKey: 'ctrl' }, // Abilita lo zoom con la rotella del mouse
+                        pinch: { enabled: true },  // Abilita lo zoom tramite pinch sui dispositivi mobile
+                        onZoomComplete: ({ chart }) => {
+                            const xScale = chart.scales.x;
+                            if (xScale) {
+                                const originalRange = chart.$originalXMax - chart.$originalXMin;
+                                const currentRange = xScale.max - xScale.min;
+                                // Abilita o disabilita il pan in base allo zoom
+                                chart.options.plugins.zoom.pan.enabled = true;
+                                chart.update('none');
+                            }
+                            else chart.options.plugins.zoom.pan.enabled = true;
+                        }
                     },
+                    // Configurazione del pan (inizialmente disabilitato)
                     pan: {
-                        enabled: true,
-                        mode: 'xy',
-                        modifierKey: 'shift',
-                    },
+                        enabled: false, // Viene gestito dinamicamente in onZoomComplete
+                        mode: 'x'
+                    }
                 }
             },
+            // Gestione del click (o tap) per la selezione dei punti
             onClick: (event, elements) => {
                 const points = mainChart.getElementsAtEventForMode(
                     event,
-                    'nearest', // Modalità: trova il punto più vicino al clic
+                    'nearest',
                     { intersect: true },
                     false
                 );
 
                 if (points.length) {
                     const firstPoint = points[0];
-                    const label = mainChart.data.labels[firstPoint.index]; // Estrai la label numerica
-                    const value = mainChart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index]; // Estrai il valore
-                    const labelMatch = label.match(/(\d+)/); // Trova un numero nella stringa
+                    const label = mainChart.data.labels[firstPoint.index];
+                    const value = mainChart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                    const labelMatch = label.match(/(\d+)/);
                     const labelNumber = labelMatch ? Number(labelMatch[0]) : NaN;
                     console.log(labelNumber);
-                    if (!isNaN(labelNumber)) { // Controlla che la label sia un numero
-                        selectedPoints.push(labelNumber); // Aggiungi la label selezionata
+
+                    if (!isNaN(labelNumber)) {
+                        selectedPoints.push(labelNumber);
                     }
-                    // Mostra la label e il valore
+
                     if (selectedPoints.length === 1) {
                         document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
                     } else if (selectedPoints.length === 2) {
                         document.getElementById('point2').innerText = `Label: ${selectedPoints[1]}`;
-                        const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 2000)) * 3.6).toFixed(2) // Calcola la somma
+                        const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 2000)) * 3.6).toFixed(2);
                         document.getElementById('velocity').innerHTML = `${velocity} km/h`;
-                        // Resetta i punti selezionati per una nuova selezione
                     } else if (selectedPoints.length === 3) {
+                        // Se viene selezionato un terzo punto, il primo viene sostituito e si resetta la selezione
                         selectedPoints[0] = selectedPoints[2];
                         document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
                         document.getElementById('point2').innerText = "Nessun punto selezionato";
                         selectedPoints.splice(1, 2);
                     }
-
                 }
             },
             scales: {
                 x: {
                     type: 'linear',
-                    // Etichetta in secondi, convertendo gli indici in secondi
+                    // Converte il valore della label in secondi (ad es.)
                     ticks: {
                         callback: function (value, index, values) {
-                            return `${(value / 2000).toFixed(2)}s`;  // Converte gli indici in secondi
+                            return `${(value / 2000).toFixed(2)}s`;
                         }
                     },
                 },
-                y: {
-                    type: 'linear'
-                }
+                y: { type: 'linear' }
             }
         }
     });
+
+    // Salviamo i valori originali dell'asse x per poterli confrontare nelle callback
+    mainChart.$originalXMin = mainChart.scales.x.min;
+    mainChart.$originalXMax = mainChart.scales.x.max;
+
 
 
 
@@ -515,6 +537,8 @@ export function plotData(decodedData) {
 
         const onDragMove = (e) => {
             mainChart.resetZoom();
+            mainChart.options.plugins.zoom.pan.enabled = false;
+            mainChart.update('none');
             const currentX = e.touches ? e.touches[0].clientX : e.clientX;
             const deltaX = currentX - startX;
             startX = currentX;
