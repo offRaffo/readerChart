@@ -139,8 +139,8 @@ function nextValidClick() {
         }
     }
 }
-function preValidClick() {            
-    console.log(currentFileIndex,cycleifles);
+function preValidClick() {
+    console.log(currentFileIndex, cycleifles);
 
     if (cycleifles == true) {
         if (currentFileIndex > 0) {
@@ -249,7 +249,9 @@ function getChannelData(decodedData) {
         for (let i = 0; i <= channelData.length - windowSize; i++) {
             const window = channelData.slice(i, i + windowSize);
             const sum = window.reduce((acc, val) => acc + val, 0);
-            movingAverages.push({ x: i, y: sum / windowSize });
+            if (sum!=0 && !isNaN(sum)) {
+                movingAverages.push({ x: i, y: sum / windowSize });
+            }
         }
 
         datasets.push({
@@ -271,6 +273,29 @@ plotButton.addEventListener('click', handlePlotClick);
 
 function plotData(decodedData) {
     const channel2Data = getChannelData(decodedData);
+    console.log(channel2Data[0].data.length);
+    let validata = false;
+    for (let i in channel2Data) {
+        console.log("data channel:", i);
+        for (let j in channel2Data[i].data) {
+            if (channel2Data[i].data[j].y !== 0 && !isNaN(channel2Data[i].data[j].y)) {
+                validata = true;
+            }
+
+        }
+    }
+    if (validata == false) {
+        mostraPopup();
+        if (overviewChart) {
+            overviewChart.destroy();
+            overviewChart = null;
+        }
+        if (mainChart) {
+            mainChart.destroy();
+            mainChart = null;
+        }
+        return;
+    }
     const { labels, datasets } = datasetsFromChannels(decodedData);
     const canvas = document.getElementById('overview');
     const overviewContainer = document.getElementById('overview-container');
@@ -308,7 +333,9 @@ function plotData(decodedData) {
 
     mainChart = new Chart(mainCtx, {
         type: 'line',
-        data: { labels: [], datasets: [{ data: [] }] },
+        data: { labels: [], 
+            datasets: [{ data: [] }],
+         },
         options: {
             responsive: true,
             animation: false,
@@ -318,7 +345,7 @@ function plotData(decodedData) {
                 zoom: {
                     zoom: { wheel: { enabled: true, modifierKey: 'ctrl' }, pan: { enabled: true } },
                     pan: { enabled: true, mode: 'xy', modifierKey: 'shift' },
-                    pinch:{enabled: true}
+                    pinch: { enabled: true }
                 },
             },
             onClick: (event, elements) => {
@@ -362,6 +389,9 @@ function plotData(decodedData) {
             const filteredDatasets = datasets.map(dataset => ({
                 ...dataset,
                 data: dataset.data.slice(startIndex, endIndex),
+                borderWidth: 1,
+                pointRadius: 1,      // I punti non vengono disegnati
+                pointHitRadius: 10,  // Aumenta l'area sensibile per il touch
             }));
 
             const filteredLabels = filteredDatasets[0].data.map((_, index) => `${startIndex + index}`);

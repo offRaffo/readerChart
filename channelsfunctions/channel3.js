@@ -6,7 +6,7 @@ const prevalid = document.getElementById('prevalid');
 import { decodeData } from '../rawdata.js';
 import { FileManager } from '../fileReader/file-manager.js';
 import { prova } from '../fileReader/app.js';
-const chindex = 1;
+const chindex = 2;
 let currentstart = 0;
 let cycleifles = false;
 let overviewChart = null;
@@ -97,13 +97,8 @@ async function processFiles() {
             console.log(buffer);
             // Decodifica i dati usando decodeData
             DecodedData = await decodeData(buffer);
-
-            if (DecodedData.length === 0 || DecodedData[chindex] === undefined) {
-                await mostraPopup(); // Mostra il popup e aspetta che venga chiuso
-            } else {
-                plotData(DecodedData); // Plotta i dati se validi
-                filename.innerText = `${currentFileIndex + 1}/${filesQueue.length} ${filesQueue[currentFileIndex]}`;
-            }
+            plotData(DecodedData); // Plotta i dati se validi
+            filename.innerText = `${currentFileIndex + 1}/${filesQueue.length} ${filesQueue[currentFileIndex]}`;
         } catch (error) {
             console.error("Errore nella lettura del file:", error);
         }
@@ -316,7 +311,26 @@ export function plotData(decodedData) {
     }
 
     const channel2Data = getChannelData(chindex);
-    console.log(channel2Data);
+    let validata = false;
+    for (let i in channel2Data) {
+        if (channel2Data[i].y !== 0 && !isNaN(channel2Data[i].y)) {
+            validata = true;
+        }
+
+    }
+    if (validata == false) {
+        mostraPopup();
+        if (overviewChart) {
+            overviewChart.destroy();
+            overviewChart = null;
+        }
+        if (mainChart) {
+            mainChart.destroy();
+            mainChart = null;
+        }
+        return;
+    }
+
 
     const { labels, datasets } = datasetsFromChannels(decodedData);
     const canvas = document.getElementById('overview');
@@ -341,7 +355,7 @@ export function plotData(decodedData) {
             datasets: [{
                 label: 'Media Mobile Canale 2',
                 data: channel2Data,
-                borderColor: 'red',
+                borderColor: 'blue',
                 borderWidth: 2,
                 pointRadius: 0
             }]
