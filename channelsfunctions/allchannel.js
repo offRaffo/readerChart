@@ -105,7 +105,7 @@ async function processFiles() {
                 await mostraPopup(); // Mostra il popup e aspetta che venga chiuso
             } else {
                 plotData(DecodedData); // Plotta i dati se validi
-                filename.innerText = `${currentFileIndex + 1}/${filesQueue.length} ${file.name}`;
+                filename.innerText = `${currentFileIndex + 1}/${filesQueue.length} ${filesQueue[currentFileIndex]}`;
             }
         } catch (error) {
             console.error("Errore nella lettura del file:", error);
