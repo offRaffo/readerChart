@@ -6,7 +6,8 @@ const nextvalid = document.getElementById('nextvalid');
 const prevalid = document.getElementById('prevalid');
 import { decodeData } from '../rawdata.js';
 import { prova } from '../fileReader/app.js';
-
+let minX = 0;
+let maxX = 0;
 let currentstart = 0;
 let overviewChart = null;
 let cycleifles = false;
@@ -225,7 +226,7 @@ function datasetsFromChannels(decodedData) {
     const labels = decodedData.map((_, index) => `Pacchetto ${index + 1}`);
     const datasets = decodedData[0].map((_, channelIndex) => ({
         label: `Canale ${channelIndex + 1}`,
-        data: decodedData.map((packet, index) => ({ x: index + 1, y: packet[channelIndex] })),
+        data: decodedData.map((packet, index) => ({ x: index + 1, y: packet[channelIndex] >0 ? packet[channelIndex] : null })),
         borderColor: `hsl(${(channelIndex * 360) / decodedData[0].length}, 70%, 50%)`,
         backgroundColor: `hsl(${(channelIndex * 360) / decodedData[0].length}, 70%, 70%, 0.2)`,
         fill: false,
@@ -343,8 +344,28 @@ function plotData(decodedData) {
                 legend: { display: true },
                 tooltip: { enabled: false },
                 zoom: {
-                    zoom: { wheel: { enabled: true, modifierKey: 'ctrl' }, pan: { enabled: true } },
-                    pan: { enabled: true, mode: 'xy', modifierKey: 'shift' },
+                    zoom: {
+                        mode: 'x', // Lo zoom è limitato all'asse x
+                        wheel: { enabled: true, modifierKey: 'ctrl' }, // Abilita lo zoom con la rotella del mouse
+                        pinch: { enabled: true },  // Abilita lo zoom tramite pinch sui dispositivi mobile
+                        limits: {
+                            x: { min: 0, max: 100 }  // Limiti di zoom sull'asse X (sostituisci 100 con il tuo valore massimo)
+                        },
+                        onZoom: function ({ chart }) {
+                            const xScale = chart.scales.x;
+                            console.log('Zoom attuale - Min:', xScale.min, 'Max:', xScale.max);
+                            console.log('Zoom limits:', minX,maxX);
+                            if (xScale.min < minX && xScale.max > maxX) {
+                                chart.options.plugins.zoom.pan.enabled = false;
+                            }
+                            else {
+                                chart.options.plugins.zoom.pan.enabled = true;
+                            }
+                            if (xScale.min < minX){
+                                chart.resetZoom();
+                            }
+                        },
+                    },                    pan: { enabled: true, mode: 'x', modifierKey: 'shift' },
                     pinch: { enabled: true }
                 },
             },
@@ -395,6 +416,13 @@ function plotData(decodedData) {
             }));
 
             const filteredLabels = filteredDatasets[0].data.map((_, index) => `${startIndex + index}`);
+            minX = Math.min(...filteredLabels);
+            maxX = Math.max(...filteredLabels);
+            // Log per verificare i valori min e max
+            console.log('minX:', minX, 'maxX:', maxX);
+            // Aggiorna i limiti dell'asse X
+            mainChart.options.scales.x.min = minX;
+            mainChart.options.scales.x.max = maxX;
             mainChart.data.labels = filteredLabels;
             mainChart.data.datasets = filteredDatasets;
             mainChart.update();

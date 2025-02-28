@@ -8,6 +8,8 @@ import { FileManager } from '../fileReader/file-manager.js';
 import { prova } from '../fileReader/app.js';
 const chindex = 1;
 let currentstart = 0;
+let minX = 0;
+let maxX = 0;
 let cycleifles = false;
 let overviewChart = null;
 let mainChart = null;
@@ -434,23 +436,46 @@ export function plotData(decodedData) {
                         mode: 'x', // Lo zoom è limitato all'asse x
                         wheel: { enabled: true, modifierKey: 'ctrl' }, // Abilita lo zoom con la rotella del mouse
                         pinch: { enabled: true },  // Abilita lo zoom tramite pinch sui dispositivi mobile
-                        onZoomComplete: ({ chart }) => {
+                        limits: {
+                            x: { min: 0, max: 100 }  // Limiti di zoom sull'asse X (sostituisci 100 con il tuo valore massimo)
+                        },
+                        onZoom: function ({ chart }) {
                             const xScale = chart.scales.x;
-                            if (xScale) {
-                                const originalRange = chart.$originalXMax - chart.$originalXMin;
-                                const currentRange = xScale.max - xScale.min;
-                                // Abilita o disabilita il pan in base allo zoom
-                                chart.options.plugins.zoom.pan.enabled = true;
-                                chart.update('none');
+                            console.log('Zoom attuale - Min:', xScale.min, 'Max:', xScale.max);
+                            console.log('Zoom limits:', minX,maxX);
+                            if (xScale.min < minX && xScale.max > maxX) {
+                                chart.options.plugins.zoom.pan.enabled = false;
                             }
-                            else chart.options.plugins.zoom.pan.enabled = true;
-                        }
+                            else {
+                                chart.options.plugins.zoom.pan.enabled = true;
+                            }
+                            if (xScale.min < minX){
+                                chart.resetZoom();
+                            }
+                        },
                     },
                     // Configurazione del pan (inizialmente disabilitato)
                     pan: {
-                        enabled: false, // Viene gestito dinamicamente in onZoomComplete
-                        mode: 'x'
-                    }
+                        enabled: true, // Abilita il pan
+                        mode: 'x',
+                        limits: {
+                            x: { min: minX, max: maxX } // Imposta i limiti basati sui tuoi valori
+                        }
+                    },
+                    onPan: function ({ chart }) {
+                        console.log("pan completato");
+                        const xScale = chart.scales.x;
+                        console.log('Pan attuale - Min:', xScale.min, 'Max:', xScale.max);
+                        console.log('Limiti del pan:', minX, maxX);
+                    
+                        // Se l'utente prova a spostarsi oltre i limiti, riportiamo il grafico dentro i limiti
+                        if (xScale.min < minX || xScale.max > maxX) {
+                            chart.pan({
+                                x: xScale.min < minX ? minX : xScale.max > maxX ? maxX : xScale.min
+                            });
+                        }
+                    },
+                    
                 }
             },
             // Gestione del click (o tap) per la selezione dei punti
@@ -522,19 +547,47 @@ export function plotData(decodedData) {
     document.getElementById('updateWindow').addEventListener('click', updateWindowWidth);
     //document.getElementById('calcvelocity').addEventListener('click', evaluateVelocity);
 
-    function updateMainChart() {
-        if (cycleifles) {
+function updateMainChart() {
+    if (cycleifles) {
+        // Calcolo degli indici per il range dei dati
+        const startIndex = Math.floor((windowStart / 100) * datasets[chindex].data.length);
+        const endIndex = Math.floor(((windowStart + windowWidth) / 100) * datasets[chindex].data.length);
+        const filteredData = datasets[chindex].data.slice(startIndex, endIndex);
 
-            const startIndex = Math.floor((windowStart / 100) * datasets[chindex].data.length);
-            const endIndex = Math.floor(((windowStart + windowWidth) / 100) * datasets[chindex].data.length);
-            const filteredData = datasets[chindex].data.slice(startIndex, endIndex);
+        const filteredLabels = filteredData.map((_, index) => `${(startIndex + index)}`);
 
-            const filteredLabels = filteredData.map((_, index) => `${(startIndex + index)}`);
-            mainChart.data.labels = filteredLabels;
-            mainChart.data.datasets[0].data = filteredData;
-            mainChart.update();
-        }
+        // Aggiorna i dati del grafico
+        mainChart.data.labels = filteredLabels;
+        mainChart.data.datasets[0].data = filteredData;
+
+        // Calcola i valori minimi e massimi per l'asse X in base ai nuovi dati
+        minX = Math.min(...filteredLabels);
+        maxX = Math.max(...filteredLabels);
+
+        // Log per verificare i valori min e max
+        console.log('minX:', minX, 'maxX:', maxX);
+
+        // Aggiorna i limiti dell'asse X
+        mainChart.options.scales.x.min = minX;
+        mainChart.options.scales.x.max = maxX;
+
+        // Imposta i limiti di zoom per evitare zoom oltre il massimo
+        mainChart.options.plugins.zoom.zoom.limits = {
+            x: {
+                min: minX,  // Imposta il limite minimo di zoom
+                max: maxX   // Imposta il limite massimo di zoom
+            }
+        };
+
+        // Log per verificare i limiti di zoom
+        console.log('Zoom limits:', mainChart.options.plugins.zoom.zoom.limits);
+
+        // Forza un aggiornamento del grafico
+        mainChart.update();
     }
+}
+
+    
 
     // Drag per dispositivi desktop e mobile
     function enableDrag(element) {
@@ -554,6 +607,7 @@ export function plotData(decodedData) {
             mainChart.options.plugins.zoom.pan.enabled = false;
             mainChart.update('none');
             const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+            console.log("currentX", currentX);
             const deltaX = currentX - startX;
             startX = currentX;
             const containerWidth = overviewContainer.offsetWidth;
