@@ -33,10 +33,10 @@
             <script>
                 function startAnimation() {
                     let svgObject = document.getElementById("image1");
-            
+
                     // L'evento 'load' è già stato attivato, quindi possiamo accedere al contenuto dell'SVG
                     let svgDoc = svgObject.contentDocument; // Ottieni il documento interno dell'SVG
-            
+
                     // Seleziona tutte le lettere
                     let letterA = svgDoc.getElementById("LetterA");
                     let letterR = svgDoc.getElementById("LetterR");
@@ -50,107 +50,109 @@
                     let handlelow = svgDoc.getElementById("handlebarLow");
 
                     // Crea la timeline GSAP
-                    LetterRposition=letterR.getBBox().x;
+                    LetterRposition = letterR.getBBox().x;
                     let tl = gsap.timeline({ paused: true });
-            
+
                     // Aggiungi animazione per ciascuna lettera
                     tl.set([letterA, letterR, letterG, letterO, letterS, backWheel, handletop], {
                         clipPath: "inset(0 0 0 0)",  // Completamente nascosto (forma rettangolare)
                     })
-                    .to(frontwheel, {
-                        duration: 3, // Durata della transizione
-                        x: 1800,  // Sposta l'elemento alla posizione centrale
-                        ease: "power1.out" // Aggiungi un easing per l'animazione
-                    },0)
-                    .to(letterA, {
-                        duration: 3, // Durata della transizione
-                        x: 1800,  // Sposta l'elemento alla posizione centrale
-                        ease: "power1.out" // Aggiungi un easing per l'animazione
-                    },0)
-                    .to(handlelow, {
-                        duration: 3, // Durata della transizione
-                        x: 1800,  // Sposta l'elemento alla posizione centrale
-                        ease: "power1.out" // Aggiungi un easing per l'animazione
-                    },0)
-                    .to(backWheel, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                        
-                    }, 0)
-                    .to(backWheel,{
-                        duration:1,
-                        x:LetterRposition - 3000,
-                        ease:"linear",
-                    },0)
-                    .to(letterS,{
-                        duration:1,
-                        x:LetterRposition - 3000,
-                        ease:"linear",
-                    },0)
-                    .to(letterR,{
-                        duration:3,
-                        x:LetterRposition +900,
-                        ease:"linear",
-                    },0)
-                    .to(letterG,{
-                        duration:3,
-                        x:LetterRposition - 800,
-                        ease:"linear",
-                    },0)
-                    .to(letterO,{
-                        duration:3,
-                        x:LetterRposition -3000,
-                        ease:"linear",
-                    },0)
-                    .to(text,{
-                        duration:3,
-                        x:LetterRposition + 3000,
-                        ease:"linear",
-                    },0)
-                    .to(handletop, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                    }, 0)
-                    .to(handletop,{
-                        duration:3,
-                        x:2585,
-                        ease:"power1.out",
-                    },0)
-                    .to(letterS, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                        delay: 0.1,
-                    }, 0)
-                    .to(text, {
-                        duration: 1,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                    }, 0.3)
-                    .to(letterO, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
+                        .to(frontwheel, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(letterA, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(handlelow, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(backWheel, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
 
-                    }, 0.5)
-                    .to(letterG, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                    }, 1)
-                    .to(letterR, {
-                        duration: 0.5,
-                        clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
-                        ease: "linear",
-                    }, 1.5);
-            
+                        }, 0)
+                        .to(backWheel, {
+                            duration: 1,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterS, {
+                            duration: 1,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterR, {
+                            duration: 3,
+                            x: LetterRposition + 900,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterG, {
+                            duration: 3,
+                            x: LetterRposition - 800,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterO, {
+                            duration: 3,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(text, {
+                            duration: 3,
+                            x: LetterRposition + 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(handletop, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 0)
+                        .to(handletop, {
+                            duration: 3,
+                            x: 2585,
+                            ease: "power1.out",
+                        }, 0)
+                        .to(letterS, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                            delay: 0.1,
+                        }, 0)
+                        .to(text, {
+                            duration: 1,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 0.3)
+                        .to(letterO, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+
+                        }, 0.5)
+                        .to(letterG, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 1)
+                        .to(letterR, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 1.5);
+
                     // Avvia l'animazione
-                    tl.play();
+                    setTimeout(() => {
+                        tl.play();
+                    }, 3000);
                 }
             </script>
-            
+
 
 
             </script>
