@@ -430,32 +430,14 @@ button:active {
 .hidden {
   opacity: 0; /* Nasconde l'immagine */
 }
-#image1 {
-    opacity: 1;
-  clip-path: inset(0 100% 0 0); /* Inizialmente nasconde l'immagine a destra */
-  animation: slideIn 4s forwards ease-in;
-}
-#image2 {
-  opacity: 1;
-}
 #image-container > object {
   position: absolute;
   top: 50%; /* Posiziona verticalmente al centro */
   left: 50%; /* Posiziona orizzontalmente al centro */
-  transform: translate(-50%, -50%); /* Centrato esattamente */
+  transform: translate(-50%, -70%); /* Centrato esattamente */
   width: 50%; /* Puoi modificare la larghezza dell'oggetto */
-  height: auto; /* Mantieni l'aspect ratio */
   z-index: 9999;
 }
-@keyframes slideIn {
-  0% {
-    clip-path: inset(0 100% 0 0); /* Inizia con l'immagine nascosta a destra */
-  }
-  100% {
-    clip-path: inset(0 0 0 0); /* Alla fine l'immagine sarà visibile completamente */
-  }
-}
-
 
 #overview {
   width: 100%;

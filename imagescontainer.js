@@ -19,14 +19,12 @@ imageNames.forEach(image => {
     img.classList.add("image-slide", "hidden"); // Nascondi tutte le immagini inizialmente
     container.appendChild(img);
     images.push(img);
-    console.log(`Aggiunta immagine: ${image}`);
 });
 
 let currentIndex = 1;
 
 // Mostra la prima immagine subito e logga
 images[currentIndex].classList.remove("hidden");
-console.log(`Immagine mostrata: ${imageNames[currentIndex]}`);
 
 // Funzione per cambiare le immagini
 function changeImage() {
@@ -38,6 +36,5 @@ function changeImage() {
 
 // Avvia il ciclo dello slideshow dopo che la prima immagine è visibile
 setTimeout(() => {
-    console.log("Avvio slideshow...");
     setInterval(changeImage, 3000);
 }, 1000); // Attendi 1 secondo prima di avviare il ciclo per assicurarti che la prima immagine sia visibile
