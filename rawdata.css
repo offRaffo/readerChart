@@ -410,29 +410,42 @@ button:active {
   width: 100%;
 }
 #image-container {
-  background-color: #8a9096;
-  display: flex;
   position: relative;
-  justify-content: center;
-  align-items: center;
   width: 88%;
-  height: 100%;
-  left: 12%;
+  height: 100%; /* Altezza del contenitore */
+  margin-left : 12%;
+  overflow: hidden; /* Nascondi le immagini che escono dal contenitore */
 }
 
+.image-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease-in-out; /* Transizione di dissolvenza */
+}
+
+.hidden {
+  opacity: 0; /* Nasconde l'immagine */
+}
 #image1 {
-  position: relative;
-  width: 50%; /* Imposta la larghezza totale dell'immagine */
-  height: auto;
-  opacity: 1;
+    opacity: 1;
   clip-path: inset(0 100% 0 0); /* Inizialmente nasconde l'immagine a destra */
   animation: slideIn 4s forwards ease-in;
 }
 #image2 {
-  position: absolute;
-  width: 50%; /* Imposta la larghezza totale dell'immagine */
-  height: auto;
   opacity: 1;
+}
+#image-container > object {
+  position: absolute;
+  top: 50%; /* Posiziona verticalmente al centro */
+  left: 50%; /* Posiziona orizzontalmente al centro */
+  transform: translate(-50%, -50%); /* Centrato esattamente */
+  width: 50%; /* Puoi modificare la larghezza dell'oggetto */
+  height: auto; /* Mantieni l'aspect ratio */
+  z-index: 9999;
 }
 @keyframes slideIn {
   0% {
@@ -443,20 +456,6 @@ button:active {
   }
 }
 
-
-#wheel {
-  transform-origin: center; /* Imposta il centro del path come punto di rotazione */
-  animation: rotateWheel 5s linear infinite; /* Crea un'animazione per la rotazione */
-}
-
-@keyframes rotateWheel {
-  0% {
-    transform: rotate(0deg); /* Ruota all'inizio */
-  }
-  100% {
-    transform: rotate(360deg); /* Ruota fino a 360 gradi */
-  }
-}
 
 #overview {
   width: 100%;
