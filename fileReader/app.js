@@ -63,10 +63,12 @@ async function processFiles() {
         alert("Nessun file selezionato.");
         return;
     }
-    document.querySelector("main.content").style.display = "block";
+    document.querySelector("main.content").style.display = "flex";
     document.getElementById("overview-container").style.display="block";
     document.getElementById("mainChart").style.display="block";
     currentFileIndex = 0;
+    document.getElementById("image-container").remove(); // Rimuove l'immagine di default
+
 }
 export {prova}
 

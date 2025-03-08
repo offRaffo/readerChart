@@ -11,7 +11,7 @@
 }
 
 .sidebar {
-    width: 30%;
+    width: 12%;
     height: 100vh;
     background: #f4f4f4;
     padding: 20px;
@@ -55,7 +55,9 @@
 .file-item input {
     cursor: pointer;
 }
-
+li.file-item.label{
+    font-size:clamp(40px,8vw,105px);
+}
 .file-item:hover {
     background: #e9ecef;
     border-radius: 5px;
@@ -63,8 +65,9 @@
 
 .content {
     display: none;
-    margin-left: 30%; /* Spazio per la sidebar fissa */
+    margin-left: 12%; /* Spazio per la sidebar fissa */
     padding: 20px;
+    width: -webkit-fill-available;
     overflow: auto; /* Abilita lo scroll se necessario */
     position: relative; /* Permette al contenuto di rimanere sotto la sidebar */
     z-index: 5; /* Impedisce al contenuto di essere sovrapposto dalla sidebar */

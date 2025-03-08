@@ -209,8 +209,7 @@ export async function init(receivedFilesQueue = [], receivedFileIndex = 0, curre
     newCanvas.id = "overview";
     newmain.id = "mainChart";
     document.getElementById("overview-container").appendChild(newCanvas); // Assicurati che esista un contenitore con questo ID
-    document.querySelector("main").appendChild(newmain);
-
+    document.querySelector("#mainChartcontainer").appendChild(newmain);
 } export function cleanup() {
     cycleifles = false;
     destroyModule();
@@ -226,7 +225,7 @@ function datasetsFromChannels(decodedData) {
     const labels = decodedData.map((_, index) => `Pacchetto ${index + 1}`);
     const datasets = decodedData[0].map((_, channelIndex) => ({
         label: `Canale ${channelIndex + 1}`,
-        data: decodedData.map((packet, index) => ({ x: index + 1, y: packet[channelIndex] >0 ? packet[channelIndex] : null })),
+        data: decodedData.map((packet, index) => ({ x: index + 1, y: packet[channelIndex] })),
         borderColor: `hsl(${(channelIndex * 360) / decodedData[0].length}, 70%, 50%)`,
         backgroundColor: `hsl(${(channelIndex * 360) / decodedData[0].length}, 70%, 70%, 0.2)`,
         fill: false,
@@ -315,7 +314,7 @@ function plotData(decodedData) {
             responsive: true,
             maintainAspectRatio: false,
             animation: false,
-            plugins: { legend: { display: true }, tooltip: { enabled: true } },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
             layout: { padding: 0 },
             scales: {
                 x: { type: 'linear', display: false, max: labels.length, beginAtZero: true },
@@ -339,7 +338,8 @@ function plotData(decodedData) {
          },
         options: {
             responsive: true,
-            animation: false,
+            animation: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { display: true },
                 tooltip: { enabled: false },
@@ -407,19 +407,46 @@ function plotData(decodedData) {
         if (cycleifles) {
             const startIndex = Math.floor((windowStart / 100) * datasets[0].data.length);
             const endIndex = Math.floor(((windowStart + windowWidth) / 100) * datasets[0].data.length);
-            const filteredDatasets = datasets.map(dataset => ({
-                ...dataset,
-                data: dataset.data.slice(startIndex, endIndex),
-                borderWidth: 1,
-                pointRadius: 1,      // I punti non vengono disegnati
-                pointHitRadius: 10,  // Aumenta l'area sensibile per il touch
-            }));
+                const filteredDatasets = datasets.map(dataset => {
+                    const filteredData = dataset.data.slice(startIndex, endIndex).map(channelData => {
+                        // Filtra solo i dati dove x > 0 e y > 0
+                        if (channelData.y > 0)  return channelData; // Restituisce l'oggetto completo se x e y sono > 0
+                        return null; // Escludi l'oggetto se x o y sono <= 0
+                    }).filter(item => item !== null); // Rimuove eventuali oggetti nulli che non soddisfano la condizione
+                
+                    return {
+                        ...dataset,
+                        data: filteredData, // I dati filtrati per ogni canale
+                        borderWidth: 1,
+                        pointRadius: 1,
+                        pointHitRadius: 10, // Aumenta l'area sensibile per il touch
+                    };
+                });
+                const canaliConDati = [];
 
-            const filteredLabels = filteredDatasets[0].data.map((_, index) => `${startIndex + index}`);
+                // Itera su ogni canale e raccogli gli indici dei canali che hanno dati
+                filteredDatasets.forEach((channel, index) => {
+                    if (channel.data.length > 0) {
+                        canaliConDati.push(index); // Aggiungi l'indice del canale all'array
+                    }
+                });
+                
+                // Dopo il forEach, stampa gli indici dei canali che contengono dati
+                console.log("Canali con dati:", canaliConDati);
+                
+                
+            
+            
+            
+            console.log(filteredDatasets)
+            const filteredLabels = filteredDatasets[1].data.map((_, index) => `${startIndex + index}`);
+            console.log(filteredLabels);
             minX = Math.min(...filteredLabels);
             maxX = Math.max(...filteredLabels);
+    
             // Log per verificare i valori min e max
             console.log('minX:', minX, 'maxX:', maxX);
+    
             // Aggiorna i limiti dell'asse X
             mainChart.options.scales.x.min = minX;
             mainChart.options.scales.x.max = maxX;

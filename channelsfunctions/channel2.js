@@ -205,7 +205,7 @@ export async function init(receivedFilesQueue = [], receivedFileIndex = 0, curre
     newCanvas.id = "overview";
     newmain.id = "mainChart";
     document.getElementById("overview-container").appendChild(newCanvas); // Assicurati che esista un contenitore con questo ID
-    document.querySelector("main").appendChild(newmain);
+    document.querySelector("#mainChartcontainer").appendChild(newmain);
 
 } export function cleanup() {
     cycleifles = false;
@@ -357,7 +357,7 @@ export function plotData(decodedData) {
             datasets: [{
                 label: 'Media Mobile Canale 2',
                 data: channel2Data,
-                borderColor: 'green',
+                borderColor: 'black',
                 borderWidth: 2,
                 pointRadius: 0
             }]
@@ -426,7 +426,8 @@ export function plotData(decodedData) {
         },
         options: {
             responsive: true,
-            animation: false,
+            animation: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { display: true },
                 tooltip: { enabled: false },

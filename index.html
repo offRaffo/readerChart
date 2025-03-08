@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="fileReader/fileReader.css">
     <!-- Carica Chart.js dal CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+        integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     <!-- Carica Hammer.js dal CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"
@@ -23,6 +27,27 @@
 
 <body>
     <div class="container">
+        <div id="image-container">
+            <object type="image/svg+xml" data="Logo_ARGOS-1.svg" id="image1"></object>
+            <object type="image/svg+xml" data="Logo_ARGOS-1.svg" id="image2"></object>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    let svgObject = document.getElementById("image2");
+
+                    svgObject.addEventListener("load", function () {
+                        let svgDoc = svgObject.contentDocument; // Ottiene il documento interno dell'SVG
+                        let LetterR = svgDoc.getElementById("LetterR").style.opacity = "0";
+                        let LetterG = svgDoc.getElementById("LetterG").style.opacity = "0";
+                        let LetterO = svgDoc.getElementById("LetterO").style.opacity = "0";
+                        let LetterS = svgDoc.getElementById("LetterS").style.opacity = "0";
+                        let handlebarHigh = svgDoc.getElementById("handlebarHigh").style.opacity = "0";
+                        let text_low = svgDoc.getElementById("text_low").style.opacity = "0";
+                        let back_wheel= svgDoc.getElementById("back_wheel").style.opacity = "0";
+                    });
+                });
+
+            </script>
+        </div>
         <aside class="sidebar">
             <h2>Seleziona i File</h2>
             <button id="select-all">Seleziona Tutti</button>
@@ -40,46 +65,51 @@
                 <button onclick="chiudiPopup()">OK</button>
             </div>
             <div class="loader-container">
-                <div class="loader"></div>
+                <img id="image1" src="loading_screen.svg" alt="image2">
             </div>
+            <div id="mainChartcontainer">
+                <div id="main-container">
+                    <div id="utility-container">
+                        <input type="file" id="fileInput" />
+                        <label id="filename">Choose File</label>
+                        <select id="Chosechannel">
+                            <option value="" selected disabled>Choose Channel</option>
+                            <option value="0">Channel 1</option>
+                            <option value="1">Channel 2</option>
+                            <option value="2">Channel 3</option>
+                            <option value="all">Show All</option>
+                        </select>
+                        <div id="navigation-buttons">
+                            <button id="prevalid">previous</button>
+                            <button id="nextvalid">next</button>
+                        </div>
 
-            <div id="main-container">
-                <div id="utility-container">
-                    <input type="file" id="fileInput" />
-                    <label id="filename">Choose File</label>
-                    <select id="Chosechannel">
-                        <option value="" selected disabled>Choose Channel</option>
-                        <option value="0">Channel 1</option>
-                        <option value="1">Channel 2</option>
-                        <option value="2">Channel 3</option>
-                        <option value="all">Show All</option>
-                    </select>
-                    <div id="navigation-buttons">
-                        <button id="prevalid">previous</button>
-                        <button id="nextvalid">next</button>
+                        <button id="plotButton">Plot</button>
                     </div>
-
-                    <button id="plotButton">Plot</button>
+                    <div id="overviewandlabel">
+                        <div id="overview-container">
+                            <canvas id="overview"></canvas>
+                            <div id="window"></div>
+                        </div>
+                        <div id="label-container">
+                            <div id="containervelocity">
+                                <p>Selected Point 1: <span id="point1">No Point Selected</span></p>
+                                <p>Selected Point 2: <span id="point2">No Point Selected</span></p>
+                                <label id="velocity">Velocity</label>
+                            </div>
+                            <div id="allert">
+                                <label id="label-channel">per favore seleziona un canale</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="controls">
+                        <label for="windowWidthInput">Window Width (%)</label>
+                        <input type="number" id="windowWidthInput" min="1" max="100" value="10">
+                        <button id="updateWindow">Update</button>
+                    </div>
                 </div>
-                <div id="controls">
-                    <label for="windowWidthInput">Window Width (%)</label>
-                    <input type="number" id="windowWidthInput" min="1" max="100" value="10">
-                    <button id="updateWindow">Update</button>
-                </div>
+                <canvas id="mainChart"></canvas>
             </div>
-            <div id="label-container">
-                <p>Selected Point 1: <span id="point1">No Point Selected</span></p>
-                <p>Selected Point 2: <span id="point2">No Point Selected</span></p>
-                <label id="velocity">Velocity</label>
-            </div>
-            <div id="overview-container">
-                <canvas id="overview"></canvas>
-                <div id="window"></div>
-            </div>
-            <div id="allert">
-                <label id="label-channel">per favore seleziona un canale</label>
-            </div>
-            <canvas id="mainChart"></canvas>
         </main>
     </div>
 

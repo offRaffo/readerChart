@@ -1,5 +1,6 @@
 let currentModule = null; // Traccia il modulo attivo
 let selectedValue = null;
+let alert = document.getElementById("allert");
 document.addEventListener('DOMContentLoaded', function () {
     const selectElement = document.getElementById('Chosechannel');
     selectElement.addEventListener('change', selected_channel);
@@ -17,7 +18,9 @@ function selected_channel() {
 
     if (selectedValue !== null && selectedValue !== "") {
         console.log(`Canale selezionato: ${selectedText} (ID: ${selectedValue})`);
-        document.getElementById("label-channel").style.display = "none";
+        if (alert){
+            alert.remove();  // Rimuove il testo "Seleziona un canale"
+        }
         handleChannelSelection(selectedValue);
     } else {
         console.log("Nessun canale selezionato!");

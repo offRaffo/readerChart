@@ -93,7 +93,6 @@
    fill="#001d7f"
    id="path12" />
 </g>
-<g id="text_low">
 <text
    x="1150"
    y="60"
@@ -109,7 +108,71 @@
    fill="black"
    id="tspan11">URBAN MOBILITY</tspan> UNDER CONTROL
 </text>
-</g>
 
 </g>
+<style>
+    #text_low {
+        opacity: 0;
+    }
+    #letterA {
+        opacity: 0;
+    }
+    #letterR {
+        opacity: 0;
+    }
+    #letterG {
+        opacity: 0;
+    }
+    #letterO {
+        opacity: 0;
+    }
+    #letterS {
+        opacity: 0;
+    }
+    #handlebarHigh {
+        opacity: 0;
+    }
+    #back_wheel {
+        opacity: 0;
+    }
+</style>
+
 </svg>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const tl = gsap.timeline({ defaults: { ease: "power4.out", duration: 1 } });
+
+
+    tl
+    .to("#letterA",{
+        opacity: 1,
+        stagger: 0.03,
+        duration:0.5
+    },0)
+    .to("#letterR",{
+        opacity: 1,
+        stagger: 0.03,
+        duration:0.5
+    },2.1)
+    .to("#letterG",{
+        opacity: 1,
+        stagger: 0.03,
+        duration:0.5
+    },2.2)
+    .to("#letterO",{
+        opacity: 1,
+        stagger: 0.03,
+        duration:0.5
+    },2.3)
+    .to("#letterS",{
+        opacity: 1,
+        stagger: 0.03,
+        duration:0.5
+    },2.4)
+    .to("#back_wheel", {
+        opacity: 1,
+        duration: 1,
+        ease: "power4.out"
+    },2.5)
+
+</script>
