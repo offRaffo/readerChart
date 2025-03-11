@@ -8,28 +8,29 @@ const fileManager = new FileManager("https://incandescent-winter-hat.glitch.me")
 async function createTree(container, path = '/') {
     const { folders, files } = await fileManager.explore(path);
 
-    container.innerHTML = "";
-
     const ul = document.createElement('ul');
 
     folders.forEach(folder => {
         const li = document.createElement('li');
         const details = document.createElement('details');
         const summary = document.createElement('summary');
-        summary.textContent = folder;
+    
+        summary.textContent = folder; // Imposta il nome della cartella
         details.appendChild(summary);
         li.appendChild(details);
         li.dataset.path = `${path}/${folder}`;
-
+    
         details.addEventListener('toggle', async () => {
             if (details.open) {
+                console.log(`Ho aperto la cartella: ${folder}`);
                 await createTree(details, li.dataset.path);
             }
         });
-
+    
         ul.appendChild(li);
     });
-
+    
+    
     files.forEach(file => {
         const li = document.createElement('li');
         li.classList.add('file-item');
@@ -49,6 +50,24 @@ async function createTree(container, path = '/') {
 
     container.appendChild(ul);
 }
+let lastChecked = null;
+
+document.addEventListener("click", (e) => {
+    if (!e.target.matches(".file-checkbox")) return; // Controlla che sia una checkbox
+
+    if (e.shiftKey && lastChecked) {
+        const checkboxes = Array.from(document.querySelectorAll(".file-checkbox"));
+        const start = checkboxes.indexOf(lastChecked);
+        const end = checkboxes.indexOf(e.target);
+        
+        // Determina l'intervallo e seleziona le checkbox in mezzo
+        checkboxes.slice(Math.min(start, end), Math.max(start, end) + 1)
+                  .forEach(cb => cb.checked = lastChecked.checked);
+    }
+
+    lastChecked = e.target; // Aggiorna l'ultima checkbox selezionata
+});
+
 
 function getSelectedFiles() {
     const checkboxes = document.querySelectorAll('.file-checkbox:checked');

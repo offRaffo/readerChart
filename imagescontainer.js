@@ -1,9 +1,8 @@
 const imageNames = [
-    "images1.jpeg",
-    "images2.avif",
-    "images3.jpeg",
-    "images4.jpg",
-    "images5.jpg"
+    "image1.jpg",
+    "image2.jpg",
+    "image3.jpg",
+    "image4.jpg"
 ];
 
 const repoUrl = "https://raw.githubusercontent.com/offRaffo/readerChart/main/images/";
