@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magnetic Profile Reader</title>
+    <title>Lectura de Perfil Magnético</title>
     <link rel="stylesheet" href="rawdata.css">
     <link rel="stylesheet" href="fileReader/fileReader.css">
-    <!-- Carica Chart.js dal CDN -->
+    <!-- Cargar Chart.js desde el CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
         integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-    <!-- Carica Hammer.js dal CDN -->
+    <!-- Cargar Hammer.js desde el CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"
         integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <!-- Carica Chart.js Plugin Zoom dal CDN -->
+    <!-- Cargar Chart.js Plugin Zoom desde el CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"
         integrity="sha512-FRGbE3pigbYamZnw4+uT4t63+QJOfg4MXSgzPn2t8AWg9ofmFvZ/0Z37ZpCawjfXLBSVX2p2CncsmUH2hzsgJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -35,10 +34,10 @@
                 function startAnimation() {
                     let svgObject = document.getElementById("image1");
 
-                    // L'evento 'load' è già stato attivato, quindi possiamo accedere al contenuto dell'SVG
-                    let svgDoc = svgObject.contentDocument; // Ottieni il documento interno dell'SVG
+                    // El evento 'load' ya se ha activado, así que podemos acceder al contenido del SVG
+                    let svgDoc = svgObject.contentDocument; // Obtiene el documento interno del SVG
 
-                    // Seleziona tutte le lettere
+                    // Selecciona todas las letras
                     let letterA = svgDoc.getElementById("LetterA");
                     let letterR = svgDoc.getElementById("LetterR");
                     let letterG = svgDoc.getElementById("LetterG");
@@ -50,32 +49,32 @@
                     let frontwheel = svgDoc.getElementById("front_wheel");
                     let handlelow = svgDoc.getElementById("handlebarLow");
 
-                    // Crea la timeline GSAP
+                    // Crea la línea de tiempo de GSAP
                     LetterRposition = letterR.getBBox().x;
                     let tl = gsap.timeline({ paused: true });
 
-                    // Aggiungi animazione per ciascuna lettera
+                    // Añade animación para cada letra
                     tl.set([letterA, letterR, letterG, letterO, letterS, backWheel, handletop], {
-                        clipPath: "inset(0 0 0 0)",  // Completamente nascosto (forma rettangolare)
+                        clipPath: "inset(0 0 0 0)",  // Completamente oculto (forma rectangular)
                     })
                         .to(frontwheel, {
-                            duration: 3, // Durata della transizione
-                            x: 1800,  // Sposta l'elemento alla posizione centrale
-                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                            duration: 3, // Duración de la transición
+                            x: 1800,  // Mueve el elemento a la posición central
+                            ease: "power1.out" // Añade un easing para la animación
                         }, 0)
                         .to(letterA, {
-                            duration: 3, // Durata della transizione
-                            x: 1800,  // Sposta l'elemento alla posizione centrale
-                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                            duration: 3, // Duración de la transición
+                            x: 1800,  // Mueve el elemento a la posición central
+                            ease: "power1.out" // Añade un easing para la animación
                         }, 0)
                         .to(handlelow, {
-                            duration: 3, // Durata della transizione
-                            x: 1800,  // Sposta l'elemento alla posizione centrale
-                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                            duration: 3, // Duración de la transición
+                            x: 1800,  // Mueve el elemento a la posición central
+                            ease: "power1.out" // Añade un easing para la animación
                         }, 0)
                         .to(backWheel, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
 
                         }, 0)
@@ -111,7 +110,7 @@
                         }, 0)
                         .to(handletop, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
                         }, 0)
                         .to(handletop, {
@@ -121,48 +120,45 @@
                         }, 0)
                         .to(letterS, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
                             delay: 0.1,
                         }, 0)
                         .to(text, {
                             duration: 1,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
                         }, 0.3)
                         .to(letterO, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
 
                         }, 0.5)
                         .to(letterG, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
                         }, 1)
                         .to(letterR, {
                             duration: 0.5,
-                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            clipPath: "inset(0 100% 0 0)",  // Muestra toda la letra
                             ease: "linear",
                         }, 1.5);
 
-                    // Avvia l'animazione
+                    // Inicia la animación
                     setTimeout(() => {
                         tl.play();
                     }, 3000);
                 }
             </script>
-
-
-
             </script>
             <script src="imagescontainer.js"></script>
         </div>
         <aside class="sidebar">
-            <h2>Seleziona i File</h2>
-            <button id="select-all">Seleziona Tutti</button>
-            <button id="process-files">Carica File Selezionati</button>
+            <h2>Seleccionar Archivos</h2>
+            <button id="select-all">Seleccionar Todos</button>
+            <button id="process-files">Cargar Archivos Seleccionados</button>
             <ul id="file-tree"></ul>
         </aside>
         <main class="content">
@@ -171,9 +167,9 @@
             <!-- Popup -->
             <div class="popup" id="popup">
                 <div class="icon">⚠️</div>
-                <h2>Attenzione</h2>
-                <p>Il file caricato non contiene pacchetti validi.</p>
-                <button onclick="chiudiPopup()">OK</button>
+                <h2>Advertencia</h2>
+                <p>El archivo cargado no contiene paquetes válidos.</p>
+                <button onclick="chiudiPopup()">Aceptar</button>
             </div>
             <div class="loader-container">
                 <img id="image1" src="loading_screen.svg" alt="image2">
@@ -182,20 +178,20 @@
                 <div id="main-container">
                     <div id="utility-container">
                         <input type="file" id="fileInput" />
-                        <label id="filename">Choose File</label>
+                        <label id="filename">Seleccionar Archivo</label>
                         <select id="Chosechannel">
-                            <option value="" selected disabled>Choose Channel</option>
-                            <option value="0">Channel 1</option>
-                            <option value="1">Channel 2</option>
-                            <option value="2">Channel 3</option>
-                            <option value="all">Show All</option>
+                            <option value="" selected disabled>Seleccionar Canal</option>
+                            <option value="0">Canal 1</option>
+                            <option value="1">Canal 2</option>
+                            <option value="2">Canal 3</option>
+                            <option value="all">Mostrar Todos</option>
                         </select>
                         <div id="navigation-buttons">
-                            <button id="prevalid">previous</button>
-                            <button id="nextvalid">next</button>
+                            <button id="prevalid">anterior</button>
+                            <button id="nextvalid">siguiente</button>
                         </div>
 
-                        <button id="plotButton">Plot</button>
+                        <button id="plotButton">Graficar</button>
                     </div>
                     <div id="overviewandlabel">
                         <div id="overview-container">
@@ -204,19 +200,19 @@
                         </div>
                         <div id="label-container">
                             <div id="containervelocity">
-                                <p>Selected Point 1: <span id="point1">No Point Selected</span></p>
-                                <p>Selected Point 2: <span id="point2">No Point Selected</span></p>
-                                <label id="velocity">Velocity</label>
+                                <p>Punto Seleccionado 1: <span id="point1">Ningún Punto Seleccionado</span></p>
+                                <p>Punto Seleccionado 2: <span id="point2">Ningún Punto Seleccionado</span></p>
+                                <label id="velocity">Velocidad</label>
                             </div>
                             <div id="allert">
-                                <label id="label-channel">per favore seleziona un canale</label>
+                                <label id="label-channel">Por favor, seleccione un canal</label>
                             </div>
                         </div>
                     </div>
                     <div id="controls">
-                        <label for="windowWidthInput">Window Width (%)</label>
+                        <label for="windowWidthInput">Ancho de la Ventana (%)</label>
                         <input type="number" id="windowWidthInput" min="1" max="100" value="10">
-                        <button id="updateWindow">Update</button>
+                        <button id="updateWindow">Actualizar</button>
                     </div>
                 </div>
                 <canvas id="mainChart"></canvas>

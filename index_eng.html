@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Profile Reader</title>
+    <link rel="stylesheet" href="rawdata.css">
+    <link rel="stylesheet" href="fileReader/fileReader.css">
+    <!-- Carica Chart.js dal CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+        integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Carica Hammer.js dal CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"
+        integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Carica Chart.js Plugin Zoom dal CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"
+        integrity="sha512-FRGbE3pigbYamZnw4+uT4t63+QJOfg4MXSgzPn2t8AWg9ofmFvZ/0Z37ZpCawjfXLBSVX2p2CncsmUH2hzsgJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div id="image-container">
+            <div id="image_glass"></div>
+            <object type="image/svg+xml" data="Logo_ARGOS-1.svg" id="image1" onload="startAnimation()"></object>
+
+            <script>
+                function startAnimation() {
+                    let svgObject = document.getElementById("image1");
+
+                    // L'evento 'load' è già stato attivato, quindi possiamo accedere al contenuto dell'SVG
+                    let svgDoc = svgObject.contentDocument; // Ottieni il documento interno dell'SVG
+
+                    // Seleziona tutte le lettere
+                    let letterA = svgDoc.getElementById("LetterA");
+                    let letterR = svgDoc.getElementById("LetterR");
+                    let letterG = svgDoc.getElementById("LetterG");
+                    let letterO = svgDoc.getElementById("LetterO");
+                    let letterS = svgDoc.getElementById("LetterS");
+                    let backWheel = svgDoc.getElementById("back_wheel");
+                    let handletop = svgDoc.getElementById("handlebarHigh");
+                    let text = svgDoc.getElementById("text_low");
+                    let frontwheel = svgDoc.getElementById("front_wheel");
+                    let handlelow = svgDoc.getElementById("handlebarLow");
+
+                    // Crea la timeline GSAP
+                    LetterRposition = letterR.getBBox().x;
+                    let tl = gsap.timeline({ paused: true });
+
+                    // Aggiungi animazione per ciascuna lettera
+                    tl.set([letterA, letterR, letterG, letterO, letterS, backWheel, handletop], {
+                        clipPath: "inset(0 0 0 0)",  // Completamente nascosto (forma rettangolare)
+                    })
+                        .to(frontwheel, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(letterA, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(handlelow, {
+                            duration: 3, // Durata della transizione
+                            x: 1800,  // Sposta l'elemento alla posizione centrale
+                            ease: "power1.out" // Aggiungi un easing per l'animazione
+                        }, 0)
+                        .to(backWheel, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear", // Linear easing
+                        }, 0)
+                        .to(backWheel, {
+                            duration: 1,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterS, {
+                            duration: 1,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterR, {
+                            duration: 3,
+                            x: LetterRposition + 900,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterG, {
+                            duration: 3,
+                            x: LetterRposition - 800,
+                            ease: "linear",
+                        }, 0)
+                        .to(letterO, {
+                            duration: 3,
+                            x: LetterRposition - 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(text, {
+                            duration: 3,
+                            x: LetterRposition + 3000,
+                            ease: "linear",
+                        }, 0)
+                        .to(handletop, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear", // Linear easing
+                        }, 0)
+                        .to(handletop, {
+                            duration: 3,
+                            x: 2585,
+                            ease: "power1.out",
+                        }, 0)
+                        .to(letterS, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                            delay: 0.1,
+                        }, 0)
+                        .to(text, {
+                            duration: 1,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 0.3)
+                        .to(letterO, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 0.5)
+                        .to(letterG, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 1)
+                        .to(letterR, {
+                            duration: 0.5,
+                            clipPath: "inset(0 100% 0 0)",  // Mostra tutta la lettera
+                            ease: "linear",
+                        }, 1.5);
+
+                    // Avvia l'animazione
+                    setTimeout(() => {
+                        tl.play();
+                    }, 3000);
+                }
+            </script>
+
+            <script src="imagescontainer.js"></script>
+        </div>
+        <aside class="sidebar">
+            <h2>Select Files</h2>
+            <button id="select-all">Select All</button>
+            <button id="process-files">Upload Selected Files</button>
+            <ul id="file-tree"></ul>
+        </aside>
+        <main class="content">
+            <div class="overlay" id="popupOverlay"></div>
+
+            <!-- Popup -->
+            <div class="popup" id="popup">
+                <div class="icon">⚠️</div>
+                <h2>Warning</h2>
+                <p>The uploaded file does not contain valid packets.</p>
+                <button onclick="chiudiPopup()">OK</button>
+            </div>
+            <div class="loader-container">
+                <img id="image1" src="loading_screen.svg" alt="image2">
+            </div>
+            <div id="mainChartcontainer">
+                <div id="main-container">
+                    <div id="utility-container">
+                        <input type="file" id="fileInput" />
+                        <label id="filename">Choose File</label>
+                        <select id="Chosechannel">
+                            <option value="" selected disabled>Choose Channel</option>
+                            <option value="0">Channel 1</option>
+                            <option value="1">Channel 2</option>
+                            <option value="2">Channel 3</option>
+                            <option value="all">Show All</option>
+                        </select>
+                        <div id="navigation-buttons">
+                            <button id="prevalid">Previous</button>
+                            <button id="nextvalid">Next</button>
+                        </div>
+
+                        <button id="plotButton">Plot</button>
+                    </div>
+                    <div id="overviewandlabel">
+                        <div id="overview-container">
+                            <canvas id="overview"></canvas>
+                            <div id="window"></div>
+                        </div>
+                        <div id="label-container">
+                            <div id="containervelocity">
+                                <p>Selected Point 1: <span id="point1">No Point Selected</span></p>
+                                <p>Selected Point 2: <span id="point2">No Point Selected</span></p>
+                                <label id="velocity">Velocity</label>
+                            </div>
+                            <div id="allert">
+                                <label id="label-channel">Please select a channel</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="controls">
+                        <label for="windowWidthInput">Window Width (%)</label>
+                        <input type="number" id="windowWidthInput" min="1" max="100" value="10">
+                        <button id="updateWindow">Update</button>
+                    </div>
+                </div>
+                <canvas id="mainChart"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="rawdata.js"></script>
+    <script type="module" src="fileReader/app.js"></script>
+
+</body>
+
+</html>
