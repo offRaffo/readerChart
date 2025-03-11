@@ -27,7 +27,6 @@ images[currentIndex].classList.remove("hidden");
 
 // Funzione per cambiare le immagini
 function changeImage() {
-    console.log(`Immagine cambiata: ${imageNames[currentIndex]}`);
     images[currentIndex].classList.add("hidden"); // Nasconde l'immagine corrente
     currentIndex = (currentIndex + 1) % images.length; // Passa all'immagine successiva
     images[currentIndex].classList.remove("hidden"); // Mostra la nuova immagine
