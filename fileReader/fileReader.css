@@ -1,35 +1,55 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
 }
-li::marker{
-    content: none;
+
+li {
+  -webkit-appearance: none;
+  /* Rimuove lo stile nativo */
+  appearance: none;
+  list-style: none;
 }
-.detailsummary{
-    background-color: #80808044;
-    backdrop-filter: 3px;
-    border-radius: 20px;
-    margin: 10px;
-    padding: 5px 0px 5px 0px;
-    cursor: pointer;
-    text-align: center;
+
+li::marker {
+  display: none;
+  /* Nasconde il marker */
+  content: none;
+}
+
+.detailsummary {
+  background-color: #80808044;
+  backdrop-filter: 3px;
+  border-radius: 20px;
+  margin: 10px;
+  padding: 5px 0px 5px 0px;
+  cursor: pointer;
+  text-align: center;
+  -webkit-appearance: none;
+  /* Rimuove lo stile nativo */
+  appearance: none;
+  list-style: none;
 }
 
 .detailsummary::marker {
-    content: none;
+  display: none;
+  /* Nasconde il marker */
+  content: none;
 }
+
 .detailsummary::before {
   content: '📁';
   transform: translateY(-50%);
   transition: transform 0.3s ease;
 }
+
 .detailsummary.opened::before {
   content: '📂';
   transform: translateY(50%);
   transition: transform 0.3s ease;
 }
+
 .checkfile {
   position: absolute;
   top: 0;
@@ -41,7 +61,7 @@ li::marker{
   cursor: pointer;
 }
 
-.checkfile + label {
+.checkfile+label {
   position: relative;
   cursor: pointer;
   padding-left: 30px;
@@ -52,7 +72,7 @@ li::marker{
   margin-top: 5px;
 }
 
-.checkfile + label::before {
+.checkfile+label::before {
   content: '';
   position: absolute;
   left: 0;
@@ -65,31 +85,34 @@ li::marker{
   transition: all 0.3s ease-in-out;
 }
 
-.checkfile:not(:checked) + label:hover::before {
+.checkfile:not(:checked)+label:hover::before {
   border-color: #888;
 }
 
-.checkfile:checked + label::before {
+.checkfile:checked+label::before {
   background-color: #3498db;
   border-color: #2980b9;
 }
+
 .container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .sidebar {
-    width: 12%;
-    height: 100vh;
-    background: #f4f4f4;
-    padding: 10px;
-    border-right: 2px solid #ccc;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: fixed;
-    overflow-y: auto; /* Abilita lo scrolling verticale solo dentro la sidebar */
+  width: 12%;
+  height: 100vh;
+  background: #f4f4f4;
+  padding: 10px;
+  border-right: 2px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: fixed;
+  overflow-y: auto;
+  /* Abilita lo scrolling verticale solo dentro la sidebar */
 }
+
 .sidebar,
 .sidebar * {
   user-select: none;
@@ -99,61 +122,68 @@ li::marker{
 }
 
 .sidebar h2 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .sidebar button {
-    padding: 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.3s;
-    width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+  width: 100%;
 }
 
 .sidebar button:hover {
-    background: #0056b3;
+  background: #0056b3;
 }
 
 .file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 5px;
-    font-size: 0.9rem;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .file-item input {
-    cursor: pointer;
+  cursor: pointer;
 }
-li.file-item.label{
-    font-size:clamp(40px,8vw,105px);
+
+li.file-item.label {
+  font-size: clamp(40px, 8vw, 105px);
 }
+
 .file-item:hover {
-    background: #e9ecef;
-    border-radius: 5px;
+  background: #e9ecef;
+  border-radius: 5px;
 }
+
 .content {
-    display: none;
-    margin-left: 12%; /* Spazio per la sidebar fissa */
-    padding: 20px;
-    width: -webkit-fill-available;
-    overflow: auto; /* Abilita lo scroll se necessario */
-    position: relative; /* Permette al contenuto di rimanere sotto la sidebar */
-    z-index: 5; /* Impedisce al contenuto di essere sovrapposto dalla sidebar */
+  display: none;
+  margin-left: 12%;
+  /* Spazio per la sidebar fissa */
+  padding: 20px;
+  width: -webkit-fill-available;
+  overflow: auto;
+  /* Abilita lo scroll se necessario */
+  position: relative;
+  /* Permette al contenuto di rimanere sotto la sidebar */
+  z-index: 5;
+  /* Impedisce al contenuto di essere sovrapposto dalla sidebar */
 }
 
 #graph-container {
-    width: 100%;
-    height: 400px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
