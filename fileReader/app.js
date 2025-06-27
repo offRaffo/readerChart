@@ -1,7 +1,8 @@
 import { FileManager } from './file-manager.js';
-import {selectedValue,handleChannelSelection} from '../rawdata.js';
+import { selectedValue, handleChannelSelection } from '../rawdata.js';
 let filesQueue = [];
-let prova =[];
+let prova = [];
+const folderState = {};
 let currentFileIndex = 0;
 const fileManager = new FileManager("https://incandescent-winter-hat.glitch.me");
 
@@ -11,26 +12,41 @@ async function createTree(container, path = '/') {
     const ul = document.createElement('ul');
 
     folders.forEach(folder => {
-        const li = document.createElement('li');
-        const details = document.createElement('details');
-        const summary = document.createElement('summary');
-    
-        summary.textContent = folder; // Imposta il nome della cartella
-        details.appendChild(summary);
-        li.appendChild(details);
-        li.dataset.path = `${path}/${folder}`;
-    
-        details.addEventListener('toggle', async () => {
-            if (details.open) {
-                console.log(`Ho aperto la cartella: ${folder}`);
-                await createTree(details, li.dataset.path);
-            }
-        });
-    
-        ul.appendChild(li);
+        if (folder !== "Lab") {
+            const li = document.createElement('li');
+            const details = document.createElement('details');
+            const summary = document.createElement('summary');
+
+            summary.textContent = folder;
+            summary.className = "detailsummary";
+            summary.classList.add("parent-summary");
+
+            details.appendChild(summary);
+            li.appendChild(details);
+            li.dataset.path = `${path}/${folder}`;
+            ul.appendChild(li);
+
+            details.addEventListener('toggle', async () => {
+                const currentPath = li.dataset.path;
+
+                if (details.open) {
+                    // Aggiungi la classe opened quando si espande
+                    summary.classList.add("opened");
+
+                    // Carica contenuti solo una volta
+                    if (!folderState[currentPath]) {
+                        folderState[currentPath] = true;
+                        await createTree(details, currentPath); // Funzione che carica file/sottocartelle
+                    }
+                } else {
+                    // Rimuovi la classe quando si chiude
+                    summary.classList.remove("opened");
+                }
+            });
+        }
     });
-    
-    
+
+
     files.forEach(file => {
         const li = document.createElement('li');
         li.classList.add('file-item');
@@ -38,61 +54,70 @@ async function createTree(container, path = '/') {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.value = `${path}/${file}`;
-        checkbox.classList.add('file-checkbox');
+        checkbox.id = `checkfile-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+        checkbox.classList.add('checkfile');
 
         const label = document.createElement('label');
         label.textContent = file;
+        label.setAttribute('for', checkbox.id);
 
         li.appendChild(checkbox);
         li.appendChild(label);
+
+        li.addEventListener('click', function (e) {
+            if (e.target !== checkbox && e.target !== label) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+
         ul.appendChild(li);
     });
-
     container.appendChild(ul);
 }
 let lastChecked = null;
 
 document.addEventListener("click", (e) => {
-    if (!e.target.matches(".file-checkbox")) return; // Controlla che sia una checkbox
+    if (!e.target.matches(".checkfile")) return;
 
     if (e.shiftKey && lastChecked) {
-        const checkboxes = Array.from(document.querySelectorAll(".file-checkbox"));
+        const checkboxes = Array.from(document.querySelectorAll(".checkfile"));
         const start = checkboxes.indexOf(lastChecked);
         const end = checkboxes.indexOf(e.target);
-        
-        // Determina l'intervallo e seleziona le checkbox in mezzo
+
+
         checkboxes.slice(Math.min(start, end), Math.max(start, end) + 1)
-                  .forEach(cb => cb.checked = lastChecked.checked);
+            .forEach(cb => cb.checked = lastChecked.checked);
     }
 
-    lastChecked = e.target; // Aggiorna l'ultima checkbox selezionata
+    lastChecked = e.target;
 });
 
 
 function getSelectedFiles() {
-    const checkboxes = document.querySelectorAll('.file-checkbox:checked');
+    const checkboxes = document.querySelectorAll('.checkfile:checked');
     return Array.from(checkboxes).map(cb => cb.value);
 }
 
 async function processFiles() {
     filesQueue = getSelectedFiles();
-    prova=filesQueue;
+    prova = filesQueue;
     handleChannelSelection(selectedValue);
     if (filesQueue.length === 0) {
         alert("Nessun file selezionato.");
         return;
     }
     document.querySelector("main.content").style.display = "flex";
-    document.getElementById("overview-container").style.display="block";
-    document.getElementById("mainChart").style.display="block";
+    document.getElementById("overview-container").style.display = "block";
+    document.getElementById("mainChart").style.display = "block";
     currentFileIndex = 0;
     document.getElementById("image-container").remove(); // Rimuove l'immagine di default
 
 }
-export {prova}
+export { prova }
 
 function toggleSelectAll() {
-    const checkboxes = document.querySelectorAll('.file-checkbox');
+    const checkboxes = document.querySelectorAll('.checkfile');
     const allChecked = Array.from(checkboxes).every(cb => cb.checked);
     checkboxes.forEach(cb => cb.checked = !allChecked);
 }
