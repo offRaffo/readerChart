@@ -4,9 +4,7 @@ let filesQueue = [];
 let prova = [];
 const folderState = {};
 let currentFileIndex = 0;
-//const fileManager = new FileManager("https://incandescent-winter-hat.glitch.me");
-const fileManager = new FileManager("http://sbnv01.itaca.upv.es:3000");
-
+const fileManager = new FileManager("https://incandescent-winter-hat.glitch.me");
 async function createTree(container, path = '/') {
     const { folders, files } = await fileManager.explore(path);
 
