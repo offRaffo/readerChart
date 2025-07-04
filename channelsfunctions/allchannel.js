@@ -387,7 +387,7 @@ function plotData(decodedData) {
     });
 
     const windowElement = document.getElementById('window');
-    let windowWidth = 10;
+    let windowWidth = 100;
     let windowStart = currentstart; // Posizione iniziale della finestra
 
     document.getElementById('updateWindow').addEventListener('click', updateWindowWidth);
