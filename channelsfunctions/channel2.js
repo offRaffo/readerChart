@@ -541,7 +541,7 @@ export function plotData(decodedData) {
 
     // Variabili per la finestra trasparente
     const windowElement = document.getElementById('window');
-    let windowWidth = 10; // Percentuale della larghezza della finestra
+    let windowWidth = 100; // Percentuale della larghezza della finestra
     let windowStart = currentstart; // Posizione iniziale della finestra
 
     // Aggiorna il grafico principale
