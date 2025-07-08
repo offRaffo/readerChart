@@ -49,7 +49,7 @@ export class FileManager {
             if (!response.ok) throw new Error("Errore nel caricamento dei dati.");
             const buffer = await response.arrayBuffer();
             const path = "/"
-            const find = await fetch(`https://incandescent-winter-hat.glitch.me/ftp/data?file=${path}/${name_files[0]}`);
+            const find = await fetch(`https://argos-server.onrender.com/ftp/data?file=${path}/${name_files[0]}`);
             const data = await find.json();
             plotData(data);
             document.getElementById("filename").innerText =
