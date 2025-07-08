@@ -504,7 +504,7 @@ export function plotData(decodedData) {
                         document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
                     } else if (selectedPoints.length === 2) {
                         document.getElementById('point2').innerText = `Label: ${selectedPoints[1]}`;
-                                const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 1000)) * 3.6).toFixed(2);
+                                const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 23000)) * 3.6).toFixed(2);
                         document.getElementById('velocity').innerHTML = `${velocity} km/h`;
                     } else if (selectedPoints.length === 3) {
                         // Se viene selezionato un terzo punto, il primo viene sostituito e si resetta la selezione
@@ -521,7 +521,7 @@ export function plotData(decodedData) {
                     // Converte il valore della label in secondi (ad es.)
                     ticks: {
                         callback: function (value, index, values) {
-                            return `${(value / 1000).toFixed(2)}s`;
+                            return `${(value / 23000).toFixed(2)}s`;
                         }
                     },
                 },
