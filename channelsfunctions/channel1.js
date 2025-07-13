@@ -91,7 +91,7 @@ async function processFiles() {
 
         try {
             // Usa fetch per ottenere il file dal server FTP
-            const response = await fetch(`https://sleet-snow-bismuth.glitch.me/ftp/download?file=${file}`);
+            const response = await fetch(`https://sbnv01.itaca.upv.es/ftp/download?file=${file}`);
             const data = await response.arrayBuffer(); // Ottieni il file come ArrayBuffer
 
             // Converte l'ArrayBuffer in un Uint8Array (compatibile con il codice esistente)
