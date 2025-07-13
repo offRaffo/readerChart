@@ -92,7 +92,7 @@ async function processFiles() {
         console.log(`Elaborazione del file ${file.name}...`);
 
         try {
-            const response = await fetch(`https://argos-server.onrender.com/ftp/download?file=${file}`);
+            const response = await fetch(`https://sbnv01.itaca.upv.es/ftp/download?file=${file}`);
             const data = await response.arrayBuffer(); // Ottieni il file come ArrayBuffer
 
             // Converte l'ArrayBuffer in un Uint8Array (compatibile con il codice esistente)
