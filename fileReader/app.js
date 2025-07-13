@@ -4,7 +4,7 @@ let filesQueue = [];
 let prova = [];
 const folderState = {};
 let currentFileIndex = 0;
-const fileManager = new FileManager("https://argos-server.onrender.com");
+const fileManager = new FileManager("https://sbnv01.itaca.upv.es");
 async function createTree(container, path = '/') {
     const { folders, files } = await fileManager.explore(path);
 
