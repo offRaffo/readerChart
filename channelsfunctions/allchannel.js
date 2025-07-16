@@ -408,7 +408,7 @@ function plotData(decodedData) {
                     type: 'linear',
                     ticks: {
                         callback: function (value) {
-                            return `${(value / 2000).toFixed(2)}s`;
+                            return `${(value / 6377).toFixed(2)}s`;
                         },
                     },
                 },
@@ -510,7 +510,7 @@ function plotData(decodedData) {
                 document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
             } else if (selectedPoints.length === 2) {
                 document.getElementById('point2').innerText = `Label: ${selectedPoints[1]}`;
-                const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 2000)) * 3.6).toFixed(2);
+                const velocity = ((0.316 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 6377)) * 3.6).toFixed(2);
                 document.getElementById('velocity').innerHTML = `${velocity} km/h`;
             } else if (selectedPoints.length === 3) {
                 selectedPoints[0] = selectedPoints[2];
