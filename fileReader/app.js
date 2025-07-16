@@ -11,8 +11,15 @@ async function createTree(container, path = '/', depth = 0, loadRecursively = fa
 
     const ul = document.createElement('ul');
 
+    // Ordina le cartelle in base alla data (decrescente)
+    const sortedFolders = [...folders].sort((a, b) => {
+        const dateA = a.match(/\d{8}/)?.[0];
+        const dateB = b.match(/\d{8}/)?.[0];
+        return dateB - dateA;
+    });
+
     // Processa le cartelle
-    for (const folder of folders) {
+    for (const folder of sortedFolders) {
         if (folder !== "Lab") {
             const li = document.createElement('li');
             const details = document.createElement('details');
@@ -31,14 +38,11 @@ async function createTree(container, path = '/', depth = 0, loadRecursively = fa
                 const folderPath = li.dataset.path;
                 const isChecked = checkbox.checked;
 
-                // Se l'evento è stato scatenato da noi stessi, lo ignoriamo
-                if (e.detail?.fromParent) {
-                    return;
-                }
+                if (e.detail?.fromParent) return;
 
-                // Seleziona tutti i file e le sottocartelle sotto questa cartella
                 selectAllUnderFolder(folderPath, isChecked, checkbox);
             });
+
             const checkboxLabel = document.createElement('label');
             checkboxLabel.setAttribute('for', checkbox.id);
             checkboxLabel.classList.add('custom-checkbox-label');
@@ -55,27 +59,31 @@ async function createTree(container, path = '/', depth = 0, loadRecursively = fa
             li.dataset.path = `${path}/${folder}`;
             ul.appendChild(li);
 
-            // Aggiungi un evento toggle per caricare i figli se non sono stati caricati
             details.addEventListener('toggle', async () => {
                 const currentPath = li.dataset.path;
 
                 if (details.open && !folderState[currentPath]) {
                     folderState[currentPath] = true;
-                    await createTree(details, currentPath, depth + 1, loadRecursively); // Passa loadRecursively
+                    await createTree(details, currentPath, depth + 1, loadRecursively);
                 }
             });
 
-            // Se loadRecursively è true, carica subito i figli
             if (loadRecursively) {
                 folderState[li.dataset.path] = true;
                 await createTree(details, li.dataset.path, depth + 1, loadRecursively);
-                //details.open = true; // Espandi automaticamente
             }
         }
     }
 
+    // Ordina i file in base all'ora (decrescente)
+    const sortedFiles = [...files].sort((a, b) => {
+        const timeA = a.match(/(\d{6})\.bin/)?.[1];
+        const timeB = b.match(/(\d{6})\.bin/)?.[1];
+        return timeB - timeA;
+    });
+
     // Processa i file
-    files.forEach(file => {
+    sortedFiles.forEach(file => {
         const li = document.createElement('li');
         li.classList.add('file-item');
 
