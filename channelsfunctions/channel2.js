@@ -6,6 +6,7 @@ const prevalid = document.getElementById('prevalid');
 import { decodeData } from '../rawdata.js';
 import { FileManager } from '../fileReader/file-manager.js';
 import { prova } from '../fileReader/app.js';
+let inputValue = 10; // Valore iniziale per la larghezza della finestra
 const chindex = 1;
 let currentstart = 0;
 let minX = 0;
@@ -52,7 +53,6 @@ async function startModuleProcessing(receivedFilesQueue, receivedFileIndex) {
             let path = "/";
             const { ftpfiles } = await explore(path);
             filesQueue = ftpfiles.map(file => `${path}/${file}`);
-            console.log(filesQueue, "file queue");
             currentFileIndex = 0;
         } else {
             console.error("Nessun file selezionato! Impossibile avviare il processo.");
@@ -81,17 +81,27 @@ async function processFiles() {
     if (cycleifles == true) {
         if (currentFileIndex >= filesQueue.length) {
             alert("Hai visualizzato tutti i file.");
-            currentFileIndex = 0; // Opzionale: resetta l'indice se tutti i file sono stati processati
+            currentFileIndex = 0;
             return;
         }
 
         document.querySelector('.loader-container').style.display = 'flex';
 
+        // ✅ Elimina i grafici esistenti
+        if (overviewChart) {
+            overviewChart.destroy();
+            overviewChart = null;
+        }
+        if (mainChart) {
+            mainChart.destroy();
+            mainChart = null;
+        }
+
         const file = filesQueue[currentFileIndex];
 
         try {
-            // Usa fetch per ottenere il file dal server FTP
             const response = await fetch(`https://sbnv01.itaca.upv.es/ftp/download?file=${file}`);
+            if (!response.ok) throw new Error("Errore nella risposta del server");
             const data = await response.arrayBuffer(); // Ottieni il file come ArrayBuffer
 
             // Converte l'ArrayBuffer in un Uint8Array (compatibile con il codice esistente)
@@ -99,18 +109,19 @@ async function processFiles() {
             console.log(buffer);
             // Decodifica i dati usando decodeData
             DecodedData = await decodeData(buffer);
-            plotData(DecodedData); // Plotta i dati se validi
+
+            plotData(DecodedData);
             filename.innerText = `${currentFileIndex + 1}/${filesQueue.length} ${filesQueue[currentFileIndex]}`;
         } catch (error) {
             console.error("Errore nella lettura del file:", error);
         }
 
         document.querySelector('.loader-container').style.display = 'none';
-
-        // **Aspetta il click dell'utente prima di passare al file successivo**
-    } else {
-        console.log("-----------------Ciclo dei file disabilitato ----------------");
     }
+    // Alla fine di processFiles()
+    document.getElementById('window').style.left = '0%';
+    currentstart = 0;
+    document.getElementById('windowWidthInput').value = windowWidth;
 }
 
 
@@ -136,7 +147,6 @@ function nextValidClick() {
     }
 }
 function preValidClick() {
-    console.log(currentFileIndex, cycleifles);
 
     if (cycleifles == true) {
         if (currentFileIndex > 0) {
@@ -186,8 +196,6 @@ export async function init(receivedFilesQueue = [], receivedFileIndex = 0, curre
     document.querySelector('.loader-container').style.display = 'flex';
     cycleifles = true;
     receivedFilesQueue = prova;
-    console.log(filesQueue, "file queue");
-    console.log("Modulo inizializzato.");
     currentstart = currentwindowstart;
     startModuleProcessing(receivedFilesQueue, receivedFileIndex);
     // ✅ Rimuove il vecchio canvas e ne crea uno nuovo
@@ -195,7 +203,6 @@ export async function init(receivedFilesQueue = [], receivedFileIndex = 0, curre
     const oldmain = document.getElementById("mainChart");
     if (oldCanvas) {
         oldCanvas.parentNode.removeChild(oldCanvas);
-        console.log("Canvas 'overview' rimosso.");
         oldmain.parentNode.removeChild(oldmain);
     }
 
@@ -245,6 +252,14 @@ function datasetsFromChannels(decodedData) {
 
 plotButton.addEventListener('click', handlePlotClick);
 export function plotData(decodedData) {
+    if (overviewChart) {
+        overviewChart.destroy();
+        overviewChart = null;
+    }
+    if (mainChart) {
+        mainChart.destroy();
+        mainChart = null;
+    }
     function getChannelData(channelIndex) {
         const windowSize = Math.floor(decodedData.length * 0.01); // Dimensione della finestra dell'1%
         const channelData = decodedData.map(packet => packet[channelIndex]);
@@ -279,7 +294,6 @@ export function plotData(decodedData) {
                 }
             });
         });
-        console.log("MinValue", minValue);
         return minValue;
     }
 
@@ -293,7 +307,6 @@ export function plotData(decodedData) {
             console.error(`Errore: il canale ${chindex} non esiste nei dati decodificati.`);
             return; // Esci dalla funzione se il canale specificato non esiste
         }
-        console.log("Creazione dei dataset dai canali...");
         const labels = decodedData.map((_, index) => `Pacchetto ${index + 1}`);
         const datasets = decodedData[chindex].map((_, channelIndex) => {
             return {
@@ -307,8 +320,6 @@ export function plotData(decodedData) {
                 fill: false
             };
         });
-        console.log("Dataset creato");
-        console.log(datasets); // Aggiungi questo log per vedere cosa restituisce la funzione
         return { labels, datasets }; // Restituisci le etichette e i dataset
     }
 
@@ -339,16 +350,13 @@ export function plotData(decodedData) {
     const overviewContainer = document.getElementById('overview-container');
     canvas.width = overviewContainer.offsetWidth;
     canvas.height = overviewContainer.offsetHeight;
-    console.log("dimensioni", canvas.width, canvas.height);
     const overviewCtx = canvas.getContext('2d');
     // Pulisce il canvas se c'è un grafico esistente
     if (overviewChart) {
-        console.log("Distruggo il grafico esistente...");
         overviewChart.destroy();
         overviewChart = null;
     }
 
-    console.log("Creazione nuovo grafico...");
 
     overviewChart = new Chart(overviewCtx, {
         type: 'line',
@@ -391,7 +399,6 @@ export function plotData(decodedData) {
         }
     });
 
-    console.log("chart 1 OverviewChart creato:", overviewChart);
 
     // Ora che il grafico esiste, possiamo aggiornarlo
     overviewChart.update();
@@ -418,7 +425,7 @@ export function plotData(decodedData) {
             datasets: [{
                 label: 'Dati Filtrati',
                 data: [],  // I dati da visualizzare
-                borderColor: 'green',
+                borderColor: 'red',
                 borderWidth: 1,
                 pointRadius: 1,      // I punti non vengono disegnati
                 pointHitRadius: 10,  // Aumenta l'area sensibile per il touch
@@ -429,54 +436,62 @@ export function plotData(decodedData) {
             animation: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true },
-                tooltip: { enabled: false },
+                legend: {
+                    display: true,
+                },
+                tooltip: {
+                    enabled: false,
+                },
                 zoom: {
-                    // Configurazione dello zoom
                     zoom: {
-                        mode: 'x', // Lo zoom è limitato all'asse x
-                        wheel: { enabled: true, modifierKey: 'ctrl' }, // Abilita lo zoom con la rotella del mouse
-                        pinch: { enabled: true },  // Abilita lo zoom tramite pinch sui dispositivi mobile
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: { enabled: true },
+                        mode: 'xy', // iniziale, ma viene modificato in onZoomStart
+                        onZoomStart: ({ chart, event }) => {
+                            if (event.ctrlKey) {
+                                chart.options.plugins.zoom.zoom.mode = 'x';
+                            } else if (event.shiftKey) {
+                                chart.options.plugins.zoom.zoom.mode = 'y';
+                            } else {
+                                // Disabilita zoom se nessun modificatore
+                                return false;
+                            }
+                        },
                         limits: {
-                            x: { min: 0, max: 100 }  // Limiti di zoom sull'asse X (sostituisci 100 con il tuo valore massimo)
+                            x: { min: 0, max: 100 },
+                            y: { min: 0, max: 'original' }
                         },
                         onZoom: function ({ chart }) {
                             const xScale = chart.scales.x;
-                            console.log('Zoom attuale - Min:', xScale.min, 'Max:', xScale.max);
-                            console.log('Zoom limits:', minX,maxX);
                             if (xScale.min < minX && xScale.max > maxX) {
                                 chart.options.plugins.zoom.pan.enabled = false;
-                            }
-                            else {
+                            } else {
                                 chart.options.plugins.zoom.pan.enabled = true;
                             }
-                            if (xScale.min < minX){
+                            if (xScale.min < minX) {
                                 chart.resetZoom();
                             }
-                        },
-                    },
-                    // Configurazione del pan (inizialmente disabilitato)
-                    pan: {
-                        enabled: true, // Abilita il pan
-                        mode: 'x',
-                        limits: {
-                            x: { min: minX, max: maxX } // Imposta i limiti basati sui tuoi valori
                         }
                     },
+
+                    pan: {
+                        enabled: true,
+                        mode: 'x',
+                        limits: {
+                            x: { min: minX, max: maxX }
+                        }
+                    },
+
                     onPan: function ({ chart }) {
-                        console.log("pan completato");
                         const xScale = chart.scales.x;
-                        console.log('Pan attuale - Min:', xScale.min, 'Max:', xScale.max);
-                        console.log('Limiti del pan:', minX, maxX);
-                    
-                        // Se l'utente prova a spostarsi oltre i limiti, riportiamo il grafico dentro i limiti
                         if (xScale.min < minX || xScale.max > maxX) {
                             chart.pan({
                                 x: xScale.min < minX ? minX : xScale.max > maxX ? maxX : xScale.min
                             });
                         }
-                    },
-                    
+                    }
                 }
             },
             // Gestione del click (o tap) per la selezione dei punti
@@ -494,7 +509,6 @@ export function plotData(decodedData) {
                     const value = mainChart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
                     const labelMatch = label.match(/(\d+)/);
                     const labelNumber = labelMatch ? Number(labelMatch[0]) : NaN;
-                    console.log(labelNumber);
 
                     if (!isNaN(labelNumber)) {
                         selectedPoints.push(labelNumber);
@@ -504,10 +518,9 @@ export function plotData(decodedData) {
                         document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
                     } else if (selectedPoints.length === 2) {
                         document.getElementById('point2').innerText = `Label: ${selectedPoints[1]}`;
-                        const velocity = ((0.316 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 6377)) * 3.6).toFixed(2);
+                        const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 2000)) * 3.6).toFixed(2);
                         document.getElementById('velocity').innerHTML = `${velocity} km/h`;
                     } else if (selectedPoints.length === 3) {
-                        // Se viene selezionato un terzo punto, il primo viene sostituito e si resetta la selezione
                         selectedPoints[0] = selectedPoints[2];
                         document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
                         document.getElementById('point2').innerText = "Nessun punto selezionato";
@@ -518,22 +531,26 @@ export function plotData(decodedData) {
             scales: {
                 x: {
                     type: 'linear',
-                    // Converte il valore della label in secondi (ad es.)
                     ticks: {
                         callback: function (value, index, values) {
-                            return `${(value / 6377).toFixed(2)}s`;
+                            return `${(value / 2000).toFixed(2)}s`;
                         }
                     },
                 },
-                y: { type: 'linear' }
+                y: {
+                    type: 'linear'
+                }
             }
         }
+
     });
 
     // Salviamo i valori originali dell'asse x per poterli confrontare nelle callback
     mainChart.$originalXMin = mainChart.scales.x.min;
     mainChart.$originalXMax = mainChart.scales.x.max;
-
+    document.getElementById('resetZoom').addEventListener('click', () => {
+        mainChart.resetZoom();
+    });
 
 
 
@@ -541,91 +558,93 @@ export function plotData(decodedData) {
 
     // Variabili per la finestra trasparente
     const windowElement = document.getElementById('window');
-    let windowWidth = 100; // Percentuale della larghezza della finestra
+    let windowWidth = inputValue; // Percentuale della larghezza della finestra
     let windowStart = currentstart; // Posizione iniziale della finestra
 
     // Aggiorna il grafico principale
     document.getElementById('updateWindow').addEventListener('click', updateWindowWidth);
     //document.getElementById('calcvelocity').addEventListener('click', evaluateVelocity);
 
-function updateMainChart() {
-    if (cycleifles) {
-        // Calcolo degli indici per il range dei dati
-        const startIndex = Math.floor((windowStart / 100) * datasets[chindex].data.length);
-        const endIndex = Math.floor(((windowStart + windowWidth) / 100) * datasets[chindex].data.length);
-        const filteredData = datasets[chindex].data.slice(startIndex, endIndex);
+    function updateMainChart() {
+        if (cycleifles) {
+            // Calcolo degli indici per il range dei dati
+            const startIndex = Math.floor((windowStart / 100) * datasets[chindex].data.length);
+            const endIndex = Math.floor(((windowStart + windowWidth) / 100) * datasets[chindex].data.length);
+            const filteredData = datasets[chindex].data.slice(startIndex, endIndex);
 
-        const filteredLabels = filteredData.map((_, index) => `${(startIndex + index)}`);
+            const filteredLabels = filteredData.map((_, index) => `${(startIndex + index)}`);
 
-        // Aggiorna i dati del grafico
-        mainChart.data.labels = filteredLabels;
-        mainChart.data.datasets[0].data = filteredData;
+            // Aggiorna i dati del grafico
+            mainChart.data.labels = filteredLabels;
+            mainChart.data.datasets[0].data = filteredData;
 
-        // Calcola i valori minimi e massimi per l'asse X in base ai nuovi dati
-        minX = Math.min(...filteredLabels);
-        maxX = Math.max(...filteredLabels);
+            // Calcola i valori minimi e massimi per l'asse X in base ai nuovi dati
+            minX = Math.min(...filteredLabels);
+            maxX = Math.max(...filteredLabels);
 
-        // Log per verificare i valori min e max
-        console.log('minX:', minX, 'maxX:', maxX);
+            // Log per verificare i valori min e max
 
-        // Aggiorna i limiti dell'asse X
-        mainChart.options.scales.x.min = minX;
-        mainChart.options.scales.x.max = maxX;
+            // Aggiorna i limiti dell'asse X
+            mainChart.options.scales.x.min = minX;
+            mainChart.options.scales.x.max = maxX;
 
-        // Imposta i limiti di zoom per evitare zoom oltre il massimo
-        mainChart.options.plugins.zoom.zoom.limits = {
-            x: {
-                min: minX,  // Imposta il limite minimo di zoom
-                max: maxX   // Imposta il limite massimo di zoom
-            }
-        };
+            // Imposta i limiti di zoom per evitare zoom oltre il massimo
+            mainChart.options.plugins.zoom.zoom.limits = {
+                x: {
+                    min: minX,  // Imposta il limite minimo di zoom
+                    max: maxX   // Imposta il limite massimo di zoom
+                }
+            };
 
-        // Log per verificare i limiti di zoom
-        console.log('Zoom limits:', mainChart.options.plugins.zoom.zoom.limits);
+            // Log per verificare i limiti di zoom
 
-        // Forza un aggiornamento del grafico
-        mainChart.update();
+            // Forza un aggiornamento del grafico
+            mainChart.update();
+        }
     }
-}
+    let currentMoveHandler = null;
+    let currentUpHandler = null;
 
-    
-
-    // Drag per dispositivi desktop e mobile
     function enableDrag(element) {
         let startX = 0;
+        let isDragging = false;
+
+        // Gestione handler
+        let containerWidth = 0;
 
         const onDragStart = (e) => {
-            if (cycleifles) {
+            startX = e.touches ? e.touches[0].clientX : e.clientX;
+            containerWidth = overviewContainer.offsetWidth; // ✅ Fissa la dimensione all'inizio
+            isDragging = true;
 
-                startX = e.touches ? e.touches[0].clientX : e.clientX;
-                document.addEventListener(e.touches ? 'touchmove' : 'mousemove', onDragMove);
-                document.addEventListener(e.touches ? 'touchend' : 'mouseup', onDragEnd);
-            }
+            document.addEventListener(e.touches ? 'touchmove' : 'mousemove', onDragMove);
+            document.addEventListener(e.touches ? 'touchend' : 'mouseup', onDragEnd);
         };
 
         const onDragMove = (e) => {
-            mainChart.resetZoom();
-            mainChart.options.plugins.zoom.pan.enabled = false;
-            mainChart.update('none');
-            const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-            console.log("currentX", currentX);
-            const deltaX = currentX - startX;
-            startX = currentX;
-            const containerWidth = overviewContainer.offsetWidth;
-            const deltaPercent = (deltaX / containerWidth) * 100;
-            windowStart = Math.min(Math.max(windowStart + deltaPercent, 0), 100 - windowWidth);
+            if (!isDragging) return;
 
-            // Aggiorna posizione finestra e grafico
-            element.style.left = `${windowStart}%`;
-            currentstart = windowStart;
-            updateMainChart();
+            requestAnimationFrame(() => {
+                const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+                const deltaX = currentX - startX;
+                startX = currentX;
+
+                const containerWidth = overviewContainer.offsetWidth;
+                const deltaPercent = (deltaX / containerWidth) * 100;
+                windowStart = Math.min(Math.max(windowStart + deltaPercent, 0), 100 - windowWidth);
+
+                element.style.left = `${windowStart}%`;
+                currentstart = windowStart;
+            });
         };
 
         const onDragEnd = () => {
+            isDragging = false;
             document.removeEventListener('mousemove', onDragMove);
             document.removeEventListener('mouseup', onDragEnd);
             document.removeEventListener('touchmove', onDragMove);
             document.removeEventListener('touchend', onDragEnd);
+            updateMainChart();
         };
 
         element.addEventListener('mousedown', onDragStart);
@@ -634,7 +653,7 @@ function updateMainChart() {
 
     // Funzione per aggiornare la larghezza della finestra
     function updateWindowWidth() {
-        const inputValue = parseInt(document.getElementById('windowWidthInput').value, 10);
+        inputValue = parseInt(document.getElementById('windowWidthInput').value, 10);
         if (inputValue >= 1 && inputValue <= 100) {
             windowWidth = inputValue;
             windowElement.style.width = `${windowWidth}%`;

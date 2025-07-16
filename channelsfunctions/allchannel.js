@@ -8,6 +8,7 @@ import { decodeData } from '../rawdata.js';
 import { prova } from '../fileReader/app.js';
 let minX = 0;
 let maxX = 0;
+let inputValue = 10; // Valore iniziale per la larghezza della finestra
 let currentstart = 0;
 let overviewChart = null;
 let cycleifles = false;
@@ -341,33 +342,63 @@ function plotData(decodedData) {
             animation: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true },
-                tooltip: { enabled: false },
+                legend: {
+                    display: true,
+                },
+                tooltip: {
+                    enabled: false,
+                },
                 zoom: {
                     zoom: {
-                        mode: 'x', // Lo zoom è limitato all'asse x
-                        wheel: { enabled: true, modifierKey: 'ctrl' }, // Abilita lo zoom con la rotella del mouse
-                        pinch: { enabled: true },  // Abilita lo zoom tramite pinch sui dispositivi mobile
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: { enabled: true },
+                        mode: 'xy', // iniziale, ma viene modificato in onZoomStart
+                        onZoomStart: ({ chart, event }) => {
+                            if (event.ctrlKey) {
+                                chart.options.plugins.zoom.zoom.mode = 'x';
+                            } else if (event.shiftKey) {
+                                chart.options.plugins.zoom.zoom.mode = 'y';
+                            } else {
+                                // Disabilita zoom se nessun modificatore
+                                return false;
+                            }
+                        },
                         limits: {
-                            x: { min: 0, max: 100 }  // Limiti di zoom sull'asse X (sostituisci 100 con il tuo valore massimo)
+                            x: { min: 0, max: 100 },
+                            y: { min: 0, max: 'original' }
                         },
                         onZoom: function ({ chart }) {
                             const xScale = chart.scales.x;
-                            console.log('Zoom attuale - Min:', xScale.min, 'Max:', xScale.max);
-                            console.log('Zoom limits:', minX,maxX);
                             if (xScale.min < minX && xScale.max > maxX) {
                                 chart.options.plugins.zoom.pan.enabled = false;
-                            }
-                            else {
+                            } else {
                                 chart.options.plugins.zoom.pan.enabled = true;
                             }
-                            if (xScale.min < minX){
+                            if (xScale.min < minX) {
                                 chart.resetZoom();
                             }
-                        },
-                    },                    pan: { enabled: true, mode: 'x', modifierKey: 'shift' },
-                    pinch: { enabled: true }
-                },
+                        }
+                    },
+
+                    pan: {
+                        enabled: true,
+                        mode: 'xy',
+                        limits: {
+                            x: { min: minX, max: maxX }
+                        }
+                    },
+
+                    onPan: function ({ chart }) {
+                        const xScale = chart.scales.x;
+                        if (xScale.min < minX || xScale.max > maxX) {
+                            chart.pan({
+                                x: xScale.min < minX ? minX : xScale.max > maxX ? maxX : xScale.min
+                            });
+                        }
+                    }
+                }
             },
             onClick: (event, elements) => {
                 handleMainChartClick(event, elements, selectedPoints);
@@ -377,7 +408,7 @@ function plotData(decodedData) {
                     type: 'linear',
                     ticks: {
                         callback: function (value) {
-                            return `${(value / 6377).toFixed(2)}s`;
+                            return `${(value / 2000).toFixed(2)}s`;
                         },
                     },
                 },
@@ -387,13 +418,15 @@ function plotData(decodedData) {
     });
 
     const windowElement = document.getElementById('window');
-    let windowWidth = 100;
+    let windowWidth = inputValue; // Percentuale della larghezza della finestra
     let windowStart = currentstart; // Posizione iniziale della finestra
-
+        document.getElementById('resetZoom').addEventListener('click', () => {
+        mainChart.resetZoom();
+    });
     document.getElementById('updateWindow').addEventListener('click', updateWindowWidth);
 
     function updateWindowWidth() {
-        const inputValue = parseInt(document.getElementById('windowWidthInput').value, 10);
+        inputValue = parseInt(document.getElementById('windowWidthInput').value, 10);
         if (inputValue >= 1 && inputValue <= 100) {
             windowWidth = inputValue;
             windowElement.style.width = `${windowWidth}%`;
@@ -477,7 +510,7 @@ function plotData(decodedData) {
                 document.getElementById('point1').innerText = `Label: ${selectedPoints[0]}`;
             } else if (selectedPoints.length === 2) {
                 document.getElementById('point2').innerText = `Label: ${selectedPoints[1]}`;
-                const velocity = ((0.316 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 6377)) * 3.6).toFixed(2);
+                const velocity = ((0.545 / (Math.abs(selectedPoints[1] - selectedPoints[0]) / 2000)) * 3.6).toFixed(2);
                 document.getElementById('velocity').innerHTML = `${velocity} km/h`;
             } else if (selectedPoints.length === 3) {
                 selectedPoints[0] = selectedPoints[2];
@@ -487,47 +520,53 @@ function plotData(decodedData) {
             }
         }
     }
+    function enableDrag(element) {
+            let startX = 0;
+            let isDragging = false;
 
+            // Gestione handler
+            let containerWidth = 0;
+
+            const onDragStart = (e) => {
+                startX = e.touches ? e.touches[0].clientX : e.clientX;
+                containerWidth = overviewContainer.offsetWidth; // ✅ Fissa la dimensione all'inizio
+                isDragging = true;
+
+                document.addEventListener(e.touches ? 'touchmove' : 'mousemove', onDragMove);
+                document.addEventListener(e.touches ? 'touchend' : 'mouseup', onDragEnd);
+            };
+
+            const onDragMove = (e) => {
+                if (!isDragging) return;
+
+                requestAnimationFrame(() => {
+                    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const deltaX = currentX - startX;
+                    startX = currentX;
+
+                    const containerWidth = overviewContainer.offsetWidth;
+                    const deltaPercent = (deltaX / containerWidth) * 100;
+                    windowStart = Math.min(Math.max(windowStart + deltaPercent, 0), 100 - windowWidth);
+
+                    element.style.left = `${windowStart}%`;
+                    currentstart = windowStart;
+                });
+            };
+
+            const onDragEnd = () => {
+                isDragging = false;
+                document.removeEventListener('mousemove', onDragMove);
+                document.removeEventListener('mouseup', onDragEnd);
+                document.removeEventListener('touchmove', onDragMove);
+                document.removeEventListener('touchend', onDragEnd);
+                updateMainChart();
+            };
+
+            element.addEventListener('mousedown', onDragStart);
+            element.addEventListener('touchstart', onDragStart);
+        }
     enableDrag(windowElement);
     windowElement.style.left = `${windowStart}%`;
     windowElement.style.width = `${windowWidth}%`;
     updateMainChart();
-
-
-    function enableDrag(element) {
-        let startX = 0;
-        const onDragStart = (e) => {
-            if (cycleifles) {
-                startX = e.touches ? e.touches[0].clientX : e.clientX;
-                document.addEventListener(e.touches ? 'touchmove' : 'mousemove', onDragMove);
-                document.addEventListener(e.touches ? 'touchend' : 'mouseup', onDragEnd);
-                console.log("muovo anche allchannels");
-            }
-        };
-
-        const onDragMove = (e) => {
-            mainChart.resetZoom();
-            const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-            const deltaX = currentX - startX;
-            startX = currentX;
-
-            const containerWidth = overviewContainer.offsetWidth;
-            const deltaPercent = (deltaX / containerWidth) * 100;
-            windowStart = Math.min(Math.max(windowStart + deltaPercent, 0), 100 - windowWidth);
-
-            element.style.left = `${windowStart}%`;
-            currentstart = windowStart;
-            updateMainChart();
-        };
-
-        const onDragEnd = () => {
-            document.removeEventListener('mousemove', onDragMove);
-            document.removeEventListener('mouseup', onDragEnd);
-            document.removeEventListener('touchmove', onDragMove);
-            document.removeEventListener('touchend', onDragEnd);
-        };
-
-        element.addEventListener('mousedown', onDragStart);
-        element.addEventListener('touchstart', onDragStart);
-    }
 }

@@ -17,7 +17,34 @@ li::marker {
   /* Nasconde il marker */
   content: none;
 }
+.detailsummary.depth-0 {
+    font-weight: bold;
+    color: #000;
+}
 
+.detailsummary.depth-1,
+.depth-1 {
+    color: #333;
+    width: 80%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-55%);
+}
+
+.detailsummary.depth-2,
+.depth-2 {
+    color: #666;
+    width: 60%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-55%);
+}
+
+.detailsummary.depth-3,
+.depth-3 {
+    color: #999;
+    padding-left: 30px;
+}
 .detailsummary {
   background-color: #80808044;
   backdrop-filter: 3px;
@@ -50,7 +77,60 @@ li::marker {
   transition: transform 0.3s ease;
 }
 
-.checkfile {
+
+/* Nascondi la checkbox originale */
+.foldercheck {
+  position: absolute;
+  opacity: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  z-index: 2;
+  right: 0; /* a destra */
+  top: 2px;
+  margin: 0;
+  pointer-events: auto; /* assicura che sia cliccabile anche se invisibile */
+}
+
+/* Stile per il label */
+.foldercheck + label {
+  position: relative;
+  left: 10px;
+  cursor: pointer;
+  line-height: 20px;
+  user-select: none;
+  font-family: sans-serif;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+/* Stile custom checkbox */
+.foldercheck + label::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: -10px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hover */
+.foldercheck:not(:checked) + label:hover::after {
+  border-color: #888;
+}
+
+/* Checked */
+.foldercheck:checked + label::after {
+  background-color: #3498db;
+  border-color: #2980b9;
+}
+
+
+.checkfile{
   position: absolute;
   top: 0;
   left: 0;
